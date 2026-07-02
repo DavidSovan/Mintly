@@ -36,23 +36,24 @@ class SummaryCards extends ConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
             colorScheme.primary,
-            colorScheme.primary.withValues(alpha: 0.8),
-            colorScheme.secondary,
+            colorScheme.primary.withValues(alpha: 0.85),
+            colorScheme.tertiary,
           ],
+          stops: const [0.0, 0.5, 1.0],
         ),
         borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: colorScheme.primary.withValues(alpha: 0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+            color: colorScheme.primary.withValues(alpha: 0.4),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
           )
         ],
       ),
@@ -62,12 +63,15 @@ class SummaryCards extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Total Balance',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: colorScheme.onPrimary.withValues(alpha: 0.9),
-                  fontWeight: FontWeight.w500,
+              Expanded(
+                child: Text(
+                  'Total Balance',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: colorScheme.onPrimary.withValues(alpha: 0.9),
+                    fontWeight: FontWeight.w500,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               Container(
@@ -94,14 +98,15 @@ class SummaryCards extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Text(
             amount,
             style: TextStyle(
-              fontSize: 40,
-              fontWeight: FontWeight.bold,
+              fontSize: 44,
+              fontWeight: FontWeight.w800,
               color: colorScheme.onPrimary,
-              letterSpacing: -1,
+              letterSpacing: -1.5,
+              height: 1.1,
             ),
           ),
           const SizedBox(height: 8),
@@ -120,30 +125,30 @@ class SummaryCards extends ConsumerWidget {
   Widget _buildInfoCard(BuildContext context, String title, String amount, Color color, IconData icon) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.3)),
         boxShadow: [
           BoxShadow(
-            color: colorScheme.shadow.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: color.withValues(alpha: 0.05),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
           )
         ],
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
+              color: color.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(icon, color: color, size: 20),
+            child: Icon(icon, color: color, size: 22),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,18 +156,19 @@ class SummaryCards extends ConsumerWidget {
                 Text(
                   title,
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: 14,
                     color: colorScheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   amount,
                   style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
                     color: colorScheme.onSurface,
+                    letterSpacing: -0.5,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -200,9 +206,10 @@ class SpendingOverview extends ConsumerWidget {
         Text(
           'Overview',
           style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+            fontSize: 22,
+            fontWeight: FontWeight.w800,
             color: colorScheme.onSurface,
+            letterSpacing: -0.5,
           ),
         ),
         const SizedBox(height: 16),
@@ -248,17 +255,24 @@ class SpendingOverview extends ConsumerWidget {
               ),
             ),
             AnimatedContainer(
-              duration: const Duration(milliseconds: 1000),
-              curve: Curves.easeOutCubic,
+              duration: const Duration(milliseconds: 1200),
+              curve: Curves.fastOutSlowIn,
               height: 12,
               width: MediaQuery.of(context).size.width * progress,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: progress > 0.8 
                       ? [Colors.orange, Colors.red] 
-                      : [colorScheme.primary.withValues(alpha: 0.6), colorScheme.primary],
+                      : [colorScheme.primary, colorScheme.tertiary],
                 ),
                 borderRadius: BorderRadius.circular(6),
+                boxShadow: [
+                  BoxShadow(
+                    color: (progress > 0.8 ? Colors.red : colorScheme.primary).withValues(alpha: 0.4),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  )
+                ],
               ),
             ),
           ],
@@ -272,27 +286,28 @@ class SpendingOverview extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       decoration: BoxDecoration(
-        color: colorScheme.surface,
+        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+        border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
           Text(
             label,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 13,
               color: colorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             amount,
             style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
+              fontSize: 15,
+              fontWeight: FontWeight.w800,
               color: colorScheme.onSurface,
+              letterSpacing: -0.5,
             ),
             textAlign: TextAlign.center,
             overflow: TextOverflow.ellipsis,

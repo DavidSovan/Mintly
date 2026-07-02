@@ -17,33 +17,37 @@ class DashboardScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Row(
           children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: colorScheme.primary.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(Icons.account_balance_wallet, color: colorScheme.primary, size: 24),
+            CircleAvatar(
+              radius: 20,
+              backgroundColor: colorScheme.primary.withValues(alpha: 0.15),
+              child: Icon(Icons.person, color: colorScheme.primary, size: 24),
             ),
             const SizedBox(width: 12),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Welcome back,', style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant)),
-                Text('Mintly', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
+                Text('Good morning,', style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant, letterSpacing: 0.2)),
+                Text('Mintly User', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: colorScheme.onSurface, letterSpacing: -0.5)),
               ],
             ),
           ],
         ),
         backgroundColor: colorScheme.surface,
         elevation: 0,
+        scrolledUnderElevation: 0,
         actions: [
-          IconButton(
-            icon: Icon(Icons.notifications_outlined, color: colorScheme.onSurfaceVariant),
-            onPressed: () {},
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              icon: Icon(Icons.notifications_outlined, color: colorScheme.onSurface),
+              onPressed: () {},
+            ),
           ),
-          const SizedBox(width: 8),
         ],
       ),
       drawer: _buildModernDrawer(context),
@@ -103,31 +107,31 @@ class DashboardScreen extends ConsumerWidget {
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.fromLTRB(24, 64, 24, 24),
+            padding: const EdgeInsets.fromLTRB(24, 64, 24, 32),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [colorScheme.primary, colorScheme.secondary],
+                colors: [
+                  colorScheme.primary,
+                  colorScheme.primary.withValues(alpha: 0.8),
+                ],
               ),
             ),
             child: Row(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: colorScheme.onPrimary.withValues(alpha: 0.2),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(Icons.account_balance_wallet, size: 36, color: colorScheme.onPrimary),
+                CircleAvatar(
+                  radius: 28,
+                  backgroundColor: colorScheme.onPrimary,
+                  child: Icon(Icons.account_balance_wallet, size: 28, color: colorScheme.primary),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Mintly', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: colorScheme.onPrimary)),
-                      Text('Personal Finance', style: TextStyle(fontSize: 14, color: colorScheme.onPrimary.withValues(alpha: 0.8))),
+                      Text('Mintly', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: colorScheme.onPrimary, letterSpacing: -0.5)),
+                      Text('Personal Finance', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: colorScheme.onPrimary.withValues(alpha: 0.8))),
                     ],
                   ),
                 ),
@@ -210,27 +214,42 @@ class DashboardScreen extends ConsumerWidget {
   }
 
   Widget _buildActionButton(BuildContext context, String label, IconData icon, Color color, VoidCallback onTap) {
+    final colorScheme = Theme.of(context).colorScheme;
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(24),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: color.withValues(alpha: 0.3)),
+          color: colorScheme.surface,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: color.withValues(alpha: 0.2), width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: color.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            )
+          ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: color, size: 20),
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: color, size: 18),
+            ),
             const SizedBox(width: 8),
             Text(
               label,
               style: TextStyle(
                 fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: color,
+                fontWeight: FontWeight.w700,
+                color: colorScheme.onSurface,
               ),
             ),
           ],

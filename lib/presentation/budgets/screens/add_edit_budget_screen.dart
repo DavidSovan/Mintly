@@ -19,7 +19,7 @@ class _AddEditBudgetScreenState extends ConsumerState<AddEditBudgetScreen> {
   final _formKey = GlobalKey<FormState>();
   final _amountController = TextEditingController();
   
-  String _categoryId = 'all';
+  List<String> _categoryIds = ['all'];
   String _period = 'monthly';
 
   @override
@@ -27,7 +27,7 @@ class _AddEditBudgetScreenState extends ConsumerState<AddEditBudgetScreen> {
     super.initState();
     if (widget.budget != null) {
       _amountController.text = widget.budget!.amount.toString();
-      _categoryId = widget.budget!.categoryId;
+      _categoryIds = List.from(widget.budget!.categoryIds);
       _period = widget.budget!.period;
     }
   }
@@ -40,12 +40,17 @@ class _AddEditBudgetScreenState extends ConsumerState<AddEditBudgetScreen> {
 
   void _saveBudget() {
     if (_formKey.currentState!.validate()) {
+      if (_categoryIds.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select at least one category')));
+        return;
+      }
+      
       final amount = double.parse(_amountController.text);
       final id = widget.budget?.id ?? const Uuid().v4();
 
       final newBudget = BudgetEntity(
         id: id,
-        categoryId: _categoryId,
+        categoryIds: _categoryIds,
         amount: amount,
         period: _period,
       );
@@ -153,37 +158,42 @@ class _AddEditBudgetScreenState extends ConsumerState<AddEditBudgetScreen> {
                   const SizedBox(height: 24),
                   
                   // Category Selection
-                  Text('Category', style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant, fontSize: 14)),
-                  const SizedBox(height: 8),
-                  DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide.none,
+                  Text('Categories (Select one or more)', style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant, fontSize: 14)),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      FilterChip(
+                        label: const Text('Overall Budget (All)'),
+                        selected: _categoryIds.contains('all'),
+                        onSelected: (selected) {
+                          setState(() {
+                            if (selected) {
+                              _categoryIds = ['all'];
+                            } else {
+                              _categoryIds.remove('all');
+                            }
+                          });
+                        },
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide(color: colorScheme.primary, width: 2),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-                    ),
-                    icon: Icon(Icons.expand_more, color: colorScheme.onSurfaceVariant),
-                    initialValue: _categoryId,
-                    items: [
-                      const DropdownMenuItem(value: 'all', child: Text('Overall Budget (All Categories)', style: TextStyle(fontWeight: FontWeight.w500))),
                       ...expenseCategories.map((c) {
-                        return DropdownMenuItem(value: c.id, child: Text(c.name, style: const TextStyle(fontWeight: FontWeight.w500)));
+                        return FilterChip(
+                          label: Text(c.name),
+                          selected: _categoryIds.contains(c.id),
+                          onSelected: (selected) {
+                            setState(() {
+                              if (selected) {
+                                _categoryIds.remove('all');
+                                _categoryIds.add(c.id);
+                              } else {
+                                _categoryIds.remove(c.id);
+                              }
+                            });
+                          },
+                        );
                       }),
                     ],
-                    onChanged: (value) {
-                      if (value != null) {
-                        setState(() {
-                          _categoryId = value;
-                        });
-                      }
-                    },
                   ),
                   const SizedBox(height: 24),
                   

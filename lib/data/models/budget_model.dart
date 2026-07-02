@@ -3,7 +3,7 @@ import 'package:moneytrackerapp/domain/entities/budget.dart';
 class BudgetModel extends BudgetEntity {
   const BudgetModel({
     required super.id,
-    required super.categoryId,
+    required super.categoryIds,
     required super.amount,
     required super.period,
   });
@@ -11,7 +11,7 @@ class BudgetModel extends BudgetEntity {
   factory BudgetModel.fromJson(Map<String, dynamic> json) {
     return BudgetModel(
       id: json['id'],
-      categoryId: json['categoryId'],
+      categoryIds: (json['categoryId'] as String).split(','),
       amount: json['amount'],
       period: json['period'],
     );
@@ -20,7 +20,7 @@ class BudgetModel extends BudgetEntity {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'categoryId': categoryId,
+      'categoryId': categoryIds.join(','),
       'amount': amount,
       'period': period,
     };
@@ -29,7 +29,7 @@ class BudgetModel extends BudgetEntity {
   factory BudgetModel.fromEntity(BudgetEntity entity) {
     return BudgetModel(
       id: entity.id,
-      categoryId: entity.categoryId,
+      categoryIds: entity.categoryIds,
       amount: entity.amount,
       period: entity.period,
     );

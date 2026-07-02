@@ -1,12 +1,12 @@
 class BudgetEntity {
   final String id;
-  final String categoryId;
+  final List<String> categoryIds;
   final double amount;
   final String period; // 'monthly' or 'weekly'
 
   const BudgetEntity({
     required this.id,
-    required this.categoryId,
+    required this.categoryIds,
     required this.amount,
     required this.period,
   });

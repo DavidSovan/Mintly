@@ -107,16 +107,20 @@ final budgetProgressListProvider = Provider<AsyncValue<List<BudgetProgress>>>((r
     
     // Filter by category
     final relevantTransactions = periodTransactions.where((t) {
-      if (budget.categoryId == 'all') return true;
-      return t.category == budget.categoryId;
+      if (budget.categoryIds.contains('all')) return true;
+      return budget.categoryIds.contains(t.category);
     });
     
     final spent = relevantTransactions.fold(0.0, (sum, t) => sum + t.amount);
     
     String catName = 'Overall';
-    if (budget.categoryId != 'all') {
-      final cat = categories.where((c) => c.id == budget.categoryId).firstOrNull;
-      catName = cat?.name ?? 'Unknown';
+    if (!budget.categoryIds.contains('all')) {
+      final selectedCats = categories.where((c) => budget.categoryIds.contains(c.id)).toList();
+      if (selectedCats.isNotEmpty) {
+        catName = selectedCats.map((c) => c.name).join(', ');
+      } else {
+        catName = 'Unknown';
+      }
     }
     
     return BudgetProgress(

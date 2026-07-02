@@ -28,26 +28,28 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Calendar', style: TextStyle(fontWeight: FontWeight.w600)),
+        title: const Text('Calendar', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 22, letterSpacing: -0.5)),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        backgroundColor: colorScheme.surface,
       ),
       body: Column(
         children: [
           Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+            padding: const EdgeInsets.only(bottom: 12.0),
             decoration: BoxDecoration(
               color: colorScheme.surface,
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(32),
               boxShadow: [
                 BoxShadow(
-                  color: colorScheme.shadow.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
+                  color: colorScheme.shadow.withValues(alpha: 0.08),
+                  blurRadius: 24,
+                  offset: const Offset(0, 8),
                 )
               ],
-              border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+              border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.3)),
             ),
             child: TableCalendar(
               firstDay: DateTime.utc(2020, 1, 1),
@@ -68,35 +70,56 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
               headerStyle: HeaderStyle(
                 formatButtonVisible: false,
                 titleCentered: true,
-                titleTextStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                leftChevronIcon: Icon(Icons.chevron_left, color: colorScheme.onSurface),
-                rightChevronIcon: Icon(Icons.chevron_right, color: colorScheme.onSurface),
-                headerPadding: const EdgeInsets.symmetric(vertical: 16.0),
+                titleTextStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: colorScheme.onSurface, letterSpacing: -0.5),
+                leftChevronIcon: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.chevron_left, color: colorScheme.onSurface, size: 20),
+                ),
+                rightChevronIcon: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.chevron_right, color: colorScheme.onSurface, size: 20),
+                ),
+                headerPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
               ),
               daysOfWeekStyle: DaysOfWeekStyle(
-                weekdayStyle: TextStyle(color: colorScheme.onSurfaceVariant, fontWeight: FontWeight.w600, fontSize: 13),
-                weekendStyle: TextStyle(color: colorScheme.error, fontWeight: FontWeight.w600, fontSize: 13),
+                weekdayStyle: TextStyle(color: colorScheme.onSurfaceVariant, fontWeight: FontWeight.w700, fontSize: 13),
+                weekendStyle: TextStyle(color: colorScheme.error.withValues(alpha: 0.8), fontWeight: FontWeight.w700, fontSize: 13),
               ),
               calendarStyle: CalendarStyle(
                 todayDecoration: BoxDecoration(
-                  color: colorScheme.primary.withValues(alpha: 0.2),
+                  color: colorScheme.primary.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
+                  border: Border.all(color: colorScheme.primary.withValues(alpha: 0.3), width: 1.5),
                 ),
-                todayTextStyle: TextStyle(color: colorScheme.primary, fontWeight: FontWeight.bold),
+                todayTextStyle: TextStyle(color: colorScheme.primary, fontWeight: FontWeight.w800),
                 selectedDecoration: BoxDecoration(
-                  color: colorScheme.primary,
+                  gradient: LinearGradient(
+                    colors: [colorScheme.primary, colorScheme.primary.withValues(alpha: 0.8)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
                       color: colorScheme.primary.withValues(alpha: 0.4),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
                     )
                   ]
                 ),
-                weekendTextStyle: TextStyle(color: colorScheme.error.withValues(alpha: 0.8)),
+                selectedTextStyle: TextStyle(color: colorScheme.onPrimary, fontWeight: FontWeight.w800),
+                defaultTextStyle: TextStyle(color: colorScheme.onSurface, fontWeight: FontWeight.w500),
+                weekendTextStyle: TextStyle(color: colorScheme.onSurface, fontWeight: FontWeight.w500),
                 outsideDaysVisible: false,
-                cellMargin: const EdgeInsets.all(4.0),
+                cellMargin: const EdgeInsets.all(6.0),
               ),
               calendarBuilders: CalendarBuilders(
                 markerBuilder: (context, date, events) {
@@ -108,19 +131,20 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                         final isExpense = true; // Provider only tracks expenses
                         
                         return Positioned(
-                          bottom: 2,
+                          bottom: 0,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                             decoration: BoxDecoration(
-                              color: colorScheme.surface,
-                              borderRadius: BorderRadius.circular(4),
+                              color: isExpense ? Colors.red.withValues(alpha: 0.1) : Colors.green.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
                               CurrencyFormatter.format(total, settings),
                               style: TextStyle(
-                                fontSize: 8, 
+                                fontSize: 9, 
                                 color: isExpense ? Colors.red.shade700 : Colors.green.shade700, 
-                                fontWeight: FontWeight.bold
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: -0.2,
                               ),
                             ),
                           ),
@@ -140,19 +164,27 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Row(
               children: [
-                Text('Transactions', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
+                Text('Transactions', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: colorScheme.onSurface, letterSpacing: -0.5)),
                 const Spacer(),
                 totalsState.when(
                   data: (totals) {
                     final d = DateTime(selectedDay.year, selectedDay.month, selectedDay.day);
                     if (totals.containsKey(d)) {
                       final total = totals[d] ?? 0.0;
-                      return Text(
-                        CurrencyFormatter.format(total, settings),
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red.shade700, // Provider only tracks expenses
+                      return Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.red.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Text(
+                          CurrencyFormatter.format(total, settings),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.red.shade700, // Provider only tracks expenses
+                            letterSpacing: -0.5,
+                          ),
                         ),
                       );
                     }
@@ -173,16 +205,23 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.event_busy_outlined, size: 64, color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
-                        const SizedBox(height: 16),
+                        Container(
+                          padding: const EdgeInsets.all(24),
+                          decoration: BoxDecoration(
+                            color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(Icons.event_available, size: 48, color: colorScheme.primary.withValues(alpha: 0.6)),
+                        ),
+                        const SizedBox(height: 24),
                         Text(
                           'No transactions',
-                          style: TextStyle(fontSize: 18, color: colorScheme.onSurfaceVariant, fontWeight: FontWeight.w600),
+                          style: TextStyle(fontSize: 20, color: colorScheme.onSurface, fontWeight: FontWeight.w800, letterSpacing: -0.5),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           'You didn\'t spend or earn anything on this day.',
-                          style: TextStyle(fontSize: 14, color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8)),
+                          style: TextStyle(fontSize: 15, color: colorScheme.onSurfaceVariant, fontWeight: FontWeight.w500),
                           textAlign: TextAlign.center,
                         ),
                       ],
