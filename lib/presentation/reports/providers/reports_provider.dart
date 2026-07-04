@@ -1,7 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:moneytrackerapp/presentation/dashboard/providers/dashboard_provider.dart';
 import 'package:moneytrackerapp/presentation/categories/providers/category_provider.dart';
-
+import 'package:moneytrackerapp/domain/entities/settings.dart';
+import 'package:moneytrackerapp/presentation/settings/providers/settings_provider.dart';
 enum ReportPeriod { daily, weekly, monthly, yearly }
 
 class SelectedReportPeriodNotifier extends Notifier<ReportPeriod> {
@@ -56,7 +57,9 @@ final categoryExpenseProvider = Provider<AsyncValue<List<CategoryExpense>>>((ref
         inPeriod = t.date.year == now.year && t.date.month == now.month && t.date.day == now.day;
         break;
       case ReportPeriod.weekly:
-        final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
+        final settings = ref.read(settingsProvider).value ?? const SettingsEntity();
+        int daysToSubtract = settings.firstDayOfWeek == 1 ? now.weekday - 1 : now.weekday % 7;
+        final startOfWeek = DateTime(now.year, now.month, now.day).subtract(Duration(days: daysToSubtract));
         final endOfWeek = startOfWeek.add(const Duration(days: 6));
         inPeriod = t.date.isAfter(startOfWeek.subtract(const Duration(days: 1))) && 
                    t.date.isBefore(endOfWeek.add(const Duration(days: 1)));
@@ -71,10 +74,15 @@ final categoryExpenseProvider = Provider<AsyncValue<List<CategoryExpense>>>((ref
 
     if (inPeriod) {
       final cat = categories.where((c) => c.id == t.category || c.name == t.category).firstOrNull;
-      final name = cat?.name ?? 'Unknown';
+      String name = cat?.name ?? 'Unknown';
       
-      // Store the color as well, defaulting to Grey if unknown
-      final color = cat?.colorValue ?? 0xFF9E9E9E;
+      // Fallback for Savings goals without a valid category
+      if (cat == null && t.title.toLowerCase().startsWith('savings:')) {
+        name = t.title;
+      }
+      
+      // Store the color as well, defaulting to orange for savings, otherwise Grey
+      final color = cat?.colorValue ?? (name.toLowerCase().startsWith('savings:') ? 0xFFFF9800 : 0xFF9E9E9E);
       
       if (!categoryTotals.containsKey(name)) {
         categoryTotals[name] = {'amount': 0.0, 'color': color};
@@ -111,7 +119,9 @@ final incomeVsExpenseProvider = Provider<AsyncValue<Map<String, double>>>((ref) 
         inPeriod = t.date.year == now.year && t.date.month == now.month && t.date.day == now.day;
         break;
       case ReportPeriod.weekly:
-        final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
+        final settings = ref.read(settingsProvider).value ?? const SettingsEntity();
+        int daysToSubtract = settings.firstDayOfWeek == 1 ? now.weekday - 1 : now.weekday % 7;
+        final startOfWeek = DateTime(now.year, now.month, now.day).subtract(Duration(days: daysToSubtract));
         final endOfWeek = startOfWeek.add(const Duration(days: 6));
         inPeriod = t.date.isAfter(startOfWeek.subtract(const Duration(days: 1))) && 
                    t.date.isBefore(endOfWeek.add(const Duration(days: 1)));
@@ -161,7 +171,9 @@ final timeSeriesSpendingProvider = Provider<AsyncValue<List<TimeSeriesData>>>((r
         break;
       case ReportPeriod.weekly:
         // Show days of this week
-        final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
+        final settings = ref.read(settingsProvider).value ?? const SettingsEntity();
+        int daysToSubtract = settings.firstDayOfWeek == 1 ? now.weekday - 1 : now.weekday % 7;
+        final startOfWeek = DateTime(now.year, now.month, now.day).subtract(Duration(days: daysToSubtract));
         final endOfWeek = startOfWeek.add(const Duration(days: 6));
         inPeriod = t.date.isAfter(startOfWeek.subtract(const Duration(days: 1))) && 
                    t.date.isBefore(endOfWeek.add(const Duration(days: 1)));

@@ -1,7 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:moneytrackerapp/core/providers/global_providers.dart';
 import 'package:moneytrackerapp/domain/entities/transaction.dart';
-
+import 'package:moneytrackerapp/domain/entities/settings.dart';
+import 'package:moneytrackerapp/presentation/settings/providers/settings_provider.dart';
 class TransactionNotifier extends AsyncNotifier<List<TransactionEntity>> {
   @override
   Future<List<TransactionEntity>> build() async {
@@ -131,10 +132,13 @@ final todaySpendingProvider = Provider<double>((ref) {
 // Calculate This Week's Spending
 final weekSpendingProvider = Provider<double>((ref) {
   final transactionsState = ref.watch(transactionsProvider);
+  final settings = ref.watch(settingsProvider).value ?? const SettingsEntity();
+  
   return transactionsState.maybeWhen(
     data: (transactions) {
       final now = DateTime.now();
-      final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
+      int daysToSubtract = settings.firstDayOfWeek == 1 ? now.weekday - 1 : now.weekday % 7;
+      final startOfWeek = DateTime(now.year, now.month, now.day).subtract(Duration(days: daysToSubtract));
       final endOfWeek = startOfWeek.add(const Duration(days: 6));
       
       return transactions
@@ -156,5 +160,47 @@ final monthSpendingProvider = Provider<double>((ref) {
           .fold(0.0, (sum, t) => sum + t.amount);
     },
     orElse: () => 0.0,
+  );
+});
+
+// Hide Balance Toggle
+class HideBalanceNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+  
+  void toggle() => state = !state;
+}
+
+final hideBalanceProvider = NotifierProvider<HideBalanceNotifier, bool>(() {
+  return HideBalanceNotifier();
+});
+
+class DailySpending {
+  final DateTime date;
+  final double amount;
+  DailySpending(this.date, this.amount);
+}
+
+// Calculate This Week's Spending Chart
+final thisWeekChartProvider = Provider<List<DailySpending>>((ref) {
+  final transactionsState = ref.watch(transactionsProvider);
+  final settings = ref.watch(settingsProvider).value ?? const SettingsEntity();
+  
+  return transactionsState.maybeWhen(
+    data: (transactions) {
+      final now = DateTime.now();
+      int daysToSubtract = settings.firstDayOfWeek == 1 ? now.weekday - 1 : now.weekday % 7;
+      final startOfWeek = DateTime(now.year, now.month, now.day).subtract(Duration(days: daysToSubtract));
+      
+      final currentWeekDays = List.generate(7, (i) => startOfWeek.add(Duration(days: i)));
+      
+      return currentWeekDays.map((date) {
+        final amount = transactions
+            .where((t) => t.type == TransactionType.expense && t.date.year == date.year && t.date.month == date.month && t.date.day == date.day)
+            .fold(0.0, (sum, t) => sum + t.amount);
+        return DailySpending(date, amount);
+      }).toList();
+    },
+    orElse: () => [],
   );
 });

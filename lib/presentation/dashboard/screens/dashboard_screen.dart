@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:moneytrackerapp/core/theme/design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:moneytrackerapp/presentation/dashboard/widgets/dashboard_widgets.dart';
@@ -24,14 +23,7 @@ class DashboardScreen extends ConsumerWidget {
               child: Icon(Icons.person, color: colorScheme.primary, size: 24),
             ),
             const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('Good morning,', style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant, letterSpacing: 0.2)),
-                Text('Mintly User', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: colorScheme.onSurface, letterSpacing: -0.5)),
-              ],
-            ),
+            Text('Mintly', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: colorScheme.onSurface, letterSpacing: -0.5)),
           ],
         ),
         backgroundColor: colorScheme.surface,

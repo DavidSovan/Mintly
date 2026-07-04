@@ -25,11 +25,14 @@ class MoneyTrackerApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider).value;
     final themeMode = settings?.themeMode ?? ThemeMode.system;
+    final themeId = settings?.themeId ?? 'mintly_default';
+
+    final appTheme = AppThemeManager.getTheme(themeId);
 
     return MaterialApp.router(
       title: 'Mintly',
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
+      theme: appTheme.lightTheme,
+      darkTheme: appTheme.darkTheme,
       themeMode: themeMode,
       routerConfig: appRouter,
       debugShowCheckedModeBanner: false,

@@ -14,6 +14,8 @@ class SettingsNotifier extends AsyncNotifier<SettingsEntity> {
     final themeIndex = prefs.getInt('themeMode') ?? ThemeMode.system.index;
     final themeMode = ThemeMode.values[themeIndex];
     
+    final themeId = prefs.getString('themeId') ?? 'mintly_default';
+    
     final language = prefs.getString('language') ?? 'en';
     final decimalFormat = prefs.getInt('decimalFormat') ?? 2;
     final firstDayOfWeek = prefs.getInt('firstDayOfWeek') ?? 1;
@@ -22,6 +24,7 @@ class SettingsNotifier extends AsyncNotifier<SettingsEntity> {
     return SettingsEntity(
       currency: currency,
       themeMode: themeMode,
+      themeId: themeId,
       language: language,
       decimalFormat: decimalFormat,
       firstDayOfWeek: firstDayOfWeek,
@@ -34,6 +37,7 @@ class SettingsNotifier extends AsyncNotifier<SettingsEntity> {
     
     await prefs.setString('currency', newSettings.currency);
     await prefs.setInt('themeMode', newSettings.themeMode.index);
+    await prefs.setString('themeId', newSettings.themeId);
     await prefs.setString('language', newSettings.language);
     await prefs.setInt('decimalFormat', newSettings.decimalFormat);
     await prefs.setInt('firstDayOfWeek', newSettings.firstDayOfWeek);
@@ -45,6 +49,11 @@ class SettingsNotifier extends AsyncNotifier<SettingsEntity> {
   Future<void> updateThemeMode(ThemeMode mode) async {
     final current = state.value ?? const SettingsEntity();
     await updateSettings(current.copyWith(themeMode: mode));
+  }
+
+  Future<void> updateThemeId(String id) async {
+    final current = state.value ?? const SettingsEntity();
+    await updateSettings(current.copyWith(themeId: id));
   }
 
   Future<void> updateCurrency(String currency) async {

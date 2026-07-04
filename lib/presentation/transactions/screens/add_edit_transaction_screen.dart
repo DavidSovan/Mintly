@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:moneytrackerapp/core/theme/design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -133,6 +132,35 @@ class _AddEditTransactionScreenState extends ConsumerState<AddEditTransactionScr
       appBar: AppBar(
         title: Text(isEditing ? 'Edit Transaction' : 'Add Transaction', style: const TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
+        actions: [
+          if (isEditing)
+            IconButton(
+              icon: Icon(Icons.delete_outline, color: colorScheme.error),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Delete Transaction'),
+                    content: const Text('Are you sure you want to delete this transaction?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => ctx.pop(),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          ref.read(transactionsProvider.notifier).deleteTransaction(widget.transaction!.id);
+                          ctx.pop(); // close dialog
+                          context.pop(); // close screen
+                        },
+                        child: Text('Delete', style: TextStyle(color: colorScheme.error)),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+        ],
       ),
       body: SafeArea(
         child: Column(
@@ -235,7 +263,7 @@ class _AddEditTransactionScreenState extends ConsumerState<AddEditTransactionScr
                     accountsState.when(
                       data: (accounts) {
                         return DropdownButtonFormField<String>(
-                          value: accounts.any((a) => a.id == _selectedAccountId) ? _selectedAccountId : null,
+                          initialValue: accounts.any((a) => a.id == _selectedAccountId) ? _selectedAccountId : null,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
                             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),

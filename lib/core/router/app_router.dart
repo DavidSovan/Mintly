@@ -17,6 +17,7 @@ import 'package:moneytrackerapp/presentation/settings/screens/settings_screen.da
 import 'package:moneytrackerapp/presentation/goals/screens/goals_screen.dart';
 import 'package:moneytrackerapp/presentation/goals/screens/add_edit_goal_screen.dart';
 import 'package:moneytrackerapp/domain/entities/goal.dart';
+import 'package:moneytrackerapp/presentation/settings/screens/theme_settings_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -110,6 +111,10 @@ final appRouter = GoRouter(
         final goal = state.extra as GoalEntity;
         return AddEditGoalScreen(goal: goal);
       },
+    ),
+    GoRoute(
+      path: '/theme-settings',
+      builder: (context, state) => const ThemeSettingsScreen(),
     ),
   ],
 );

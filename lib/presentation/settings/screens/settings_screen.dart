@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:moneytrackerapp/core/theme/design_system.dart';
+import 'package:moneytrackerapp/core/theme/app_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart' as p;
+import 'package:go_router/go_router.dart';
 import 'package:moneytrackerapp/core/providers/global_providers.dart';
 import 'package:moneytrackerapp/presentation/dashboard/providers/dashboard_provider.dart';
 import 'package:moneytrackerapp/presentation/categories/providers/category_provider.dart';
@@ -76,19 +78,9 @@ class SettingsScreen extends ConsumerWidget {
                       icon: Icons.brightness_6,
                       iconColor: colorScheme.secondary,
                       title: 'Theme',
-                      subtitle: settings.themeMode.name.toUpperCase(),
+                      subtitle: AppThemeManager.getTheme(settings.themeId).name,
                       trailing: const Icon(Icons.chevron_right),
-                      onTap: () async {
-                        final newThemeName = await _showOptionsDialog(
-                          context, 
-                          'Select Theme', 
-                          ThemeMode.values.map((e) => e.name).toList()
-                        );
-                        if (newThemeName != null) {
-                          final newTheme = ThemeMode.values.firstWhere((e) => e.name == newThemeName);
-                          ref.read(settingsProvider.notifier).updateThemeMode(newTheme);
-                        }
-                      },
+                      onTap: () => context.push('/theme-settings'),
                     ),
                     _buildDivider(context),
                     _buildSettingsTile(

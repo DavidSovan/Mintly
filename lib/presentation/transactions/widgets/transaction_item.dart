@@ -9,6 +9,8 @@ import 'package:moneytrackerapp/core/utils/currency_formatter.dart';
 import 'package:moneytrackerapp/domain/entities/settings.dart';
 import 'package:moneytrackerapp/presentation/settings/providers/settings_provider.dart';
 import 'package:moneytrackerapp/presentation/dashboard/providers/dashboard_provider.dart';
+import 'package:moneytrackerapp/presentation/categories/providers/category_provider.dart';
+import 'package:moneytrackerapp/domain/entities/category.dart';
 
 class TransactionItem extends ConsumerWidget {
   final TransactionEntity transaction;
@@ -23,6 +25,16 @@ class TransactionItem extends ConsumerWidget {
     final amountText = CurrencyFormatter.format(transaction.amount, settings);
     final isIncome = transaction.type.name == 'income';
     final amountColor = isIncome ? colorScheme.secondary : colorScheme.error;
+
+    final categories = ref.watch(categoriesProvider).value ?? [];
+    CategoryEntity? category;
+    try {
+      category = categories.firstWhere((c) => c.id == transaction.category);
+    } catch (_) {
+      category = null;
+    }
+    
+    final iconColor = category != null ? Color(category.colorValue) : amountColor;
 
     return Dismissible(
       key: Key(transaction.id),
@@ -65,6 +77,7 @@ class TransactionItem extends ConsumerWidget {
         child: const Icon(Icons.delete, color: Colors.white),
       ),
       child: Container(
+        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
@@ -77,44 +90,63 @@ class TransactionItem extends ConsumerWidget {
             )
           ],
         ),
-        child: ListTile(
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border(left: BorderSide(color: amountColor, width: 6)),
+          ),
+          child: ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           onTap: () => context.push('/edit-transaction', extra: transaction),
           leading: Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: amountColor.withValues(alpha: 0.15),
+              color: iconColor.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
-              isIncome ? Icons.arrow_downward : Icons.arrow_upward,
-              color: amountColor,
-              size: 20,
+              category != null 
+                  ? IconData(category.iconCodePoint, fontFamily: 'MaterialIcons') 
+                  : (isIncome ? Icons.arrow_downward : Icons.arrow_upward),
+              color: iconColor,
+              size: 24,
             ),
           ),
           title: Text(
-            transaction.title, 
+            category != null ? category.name : transaction.title, 
             style: TextStyle(
               fontWeight: FontWeight.w700, 
               color: colorScheme.onSurface,
               fontSize: 15,
             ),
           ),
-          subtitle: Text(
-            DateFormat.yMMMd().format(transaction.date),
-            style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 13),
+          subtitle: Padding(
+            padding: const EdgeInsets.only(top: 4.0),
+            child: Text(
+              category != null 
+                  ? '${transaction.title}  •  ${DateFormat.yMMMd().format(transaction.date)}'
+                  : DateFormat.yMMMd().format(transaction.date),
+              style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 13, fontWeight: FontWeight.w500),
+            ),
           ),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                '${isIncome ? '+' : '-'}$amountText',
-                style: TextStyle(
-                  fontWeight: FontWeight.w800,
-                  color: amountColor,
-                  fontSize: 16,
-                  letterSpacing: -0.5,
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: amountColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: amountColor.withValues(alpha: 0.3)),
+                ),
+                child: Text(
+                  '${isIncome ? '+' : '-'}$amountText',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    color: amountColor,
+                    fontSize: 14,
+                    letterSpacing: -0.5,
+                  ),
                 ),
               ),
               PopupMenuButton<String>(
@@ -148,6 +180,7 @@ class TransactionItem extends ConsumerWidget {
               ),
             ],
           ),
+        ),
         ),
       ),
     );

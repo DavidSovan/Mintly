@@ -1,31 +1,34 @@
 import 'package:flutter/material.dart';
-import 'app_theme.dart';
 
 class DesignSystem {
-  static BoxDecoration cardDecoration({Color accentColor = AppTheme.primaryLight}) {
+  static BoxDecoration cardDecoration(BuildContext context, {Color? accentColor}) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final fallbackAccent = colorScheme.primaryContainer;
+    
     return BoxDecoration(
-      color: AppTheme.surfaceCard,
+      color: Theme.of(context).cardTheme.color,
       borderRadius: BorderRadius.circular(24),
       boxShadow: [
         BoxShadow(
-          color: AppTheme.primaryTeal.withOpacity(0.1),
+          color: colorScheme.primary.withOpacity(0.1),
           blurRadius: 20,
           offset: const Offset(0, 4),
         )
       ],
       border: Border(
-        left: BorderSide(color: accentColor, width: 6),
+        left: BorderSide(color: accentColor ?? fallbackAccent, width: 6),
       ),
     );
   }
 
-  static BoxDecoration glowCardDecoration({Color shadowColor = AppTheme.primaryTeal}) {
+  static BoxDecoration glowCardDecoration(BuildContext context, {Color? shadowColor}) {
+    final colorScheme = Theme.of(context).colorScheme;
     return BoxDecoration(
-      color: AppTheme.surfaceCard,
+      color: Theme.of(context).cardTheme.color,
       borderRadius: BorderRadius.circular(24),
       boxShadow: [
         BoxShadow(
-          color: shadowColor.withOpacity(0.3),
+          color: (shadowColor ?? colorScheme.primary).withOpacity(0.3),
           blurRadius: 20,
           offset: const Offset(0, 4),
         )
@@ -37,14 +40,14 @@ class DesignSystem {
 class StyledCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry? padding;
-  final Color accentColor;
+  final Color? accentColor;
   final VoidCallback? onTap;
 
   const StyledCard({
     Key? key,
     required this.child,
     this.padding = const EdgeInsets.all(16),
-    this.accentColor = AppTheme.primaryLight,
+    this.accentColor,
     this.onTap,
   }) : super(key: key);
 
@@ -54,7 +57,7 @@ class StyledCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: padding,
-        decoration: DesignSystem.cardDecoration(accentColor: accentColor),
+        decoration: DesignSystem.cardDecoration(context, accentColor: accentColor),
         child: child,
       ),
     );
@@ -69,17 +72,19 @@ class PrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(999),
-        gradient: const LinearGradient(
-          colors: [AppTheme.accentLight, AppTheme.accentGold],
+        gradient: LinearGradient(
+          colors: [colorScheme.secondary.withOpacity(0.8), colorScheme.secondary],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.accentGold.withOpacity(0.4),
+            color: colorScheme.secondary.withOpacity(0.4),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -95,8 +100,8 @@ class PrimaryButton extends StatelessWidget {
         ),
         child: Text(
           text,
-          style: const TextStyle(
-            color: AppTheme.primaryDark,
+          style: TextStyle(
+            color: colorScheme.onSecondary,
             fontSize: 18,
             fontWeight: FontWeight.w800,
           ),

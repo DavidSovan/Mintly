@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:moneytrackerapp/presentation/budgets/providers/budgets_provider.dart';
+import 'package:moneytrackerapp/domain/entities/transaction.dart';
+import 'package:moneytrackerapp/presentation/transactions/widgets/transaction_item.dart';
 
 class BudgetsScreen extends ConsumerWidget {
   const BudgetsScreen({super.key});
@@ -55,7 +57,7 @@ class BudgetsScreen extends ConsumerWidget {
             itemCount: progressList.length,
             itemBuilder: (context, index) {
               final bp = progressList[index];
-              return _buildBudgetCard(context, bp, ref);
+              return BudgetCard(bp: bp);
             },
           );
         },
@@ -73,8 +75,23 @@ class BudgetsScreen extends ConsumerWidget {
       ),
     );
   }
+}
 
-  Widget _buildBudgetCard(BuildContext context, BudgetProgress bp, WidgetRef ref) {
+class BudgetCard extends StatefulWidget {
+  final BudgetProgress bp;
+  
+  const BudgetCard({super.key, required this.bp});
+
+  @override
+  State<BudgetCard> createState() => _BudgetCardState();
+}
+
+class _BudgetCardState extends State<BudgetCard> {
+  bool _isExpanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final bp = widget.bp;
     final formatCurrency = NumberFormat.simpleCurrency();
     final bool isExceeded = bp.progressPercentage >= 1.0;
     final bool isWarning = bp.progressPercentage >= 0.8 && !isExceeded;
@@ -95,7 +112,9 @@ class BudgetsScreen extends ConsumerWidget {
       ),
       child: InkWell(
         onTap: () {
-          context.push('/edit-budget', extra: bp.budget);
+          setState(() {
+            _isExpanded = !_isExpanded;
+          });
         },
         borderRadius: BorderRadius.circular(16),
         child: Padding(
@@ -123,6 +142,15 @@ class BudgetsScreen extends ConsumerWidget {
                       bp.budget.period.toUpperCase(),
                       style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
+                  ),
+                  const SizedBox(width: 8),
+                  IconButton(
+                    icon: Icon(Icons.edit, color: Theme.of(context).colorScheme.onSurfaceVariant, size: 20),
+                    onPressed: () {
+                      context.push('/edit-budget', extra: bp.budget);
+                    },
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
                   ),
                 ],
               ),
@@ -215,6 +243,39 @@ class BudgetsScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
+              if (bp.transactions.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                Center(
+                  child: Icon(
+                    _isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                AnimatedSize(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                  child: _isExpanded
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Divider(height: 24),
+                            Text(
+                              'Expenses in this budget:',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            ...bp.transactions.map((t) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 8.0),
+                                  child: TransactionItem(transaction: t),
+                                )),
+                          ],
+                        )
+                      : const SizedBox.shrink(),
+                ),
+              ],
             ],
           ),
         ),

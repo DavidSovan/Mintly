@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:moneytrackerapp/core/theme/design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:intl/intl.dart';
 import 'package:moneytrackerapp/presentation/dashboard/providers/dashboard_provider.dart';
 import 'package:moneytrackerapp/core/utils/currency_formatter.dart';
 import 'package:moneytrackerapp/domain/entities/settings.dart';
+import 'package:moneytrackerapp/domain/entities/transaction.dart';
 import 'package:moneytrackerapp/presentation/settings/providers/settings_provider.dart';
 import 'package:moneytrackerapp/presentation/transactions/widgets/transaction_item.dart';
 
@@ -17,23 +19,30 @@ class SummaryCards extends ConsumerWidget {
     final expense = ref.watch(totalExpenseProvider);
     final saved = ref.watch(monthlySavingsProvider);
     final settings = ref.watch(settingsProvider).value ?? const SettingsEntity();
+    final isBalanceHidden = ref.watch(hideBalanceProvider);
 
     return Column(
       children: [
-        _buildBalanceCard(context, CurrencyFormatter.format(balance, settings), CurrencyFormatter.format(saved, settings)),
+        _buildBalanceCard(
+          context, 
+          ref,
+          CurrencyFormatter.format(balance, settings), 
+          CurrencyFormatter.format(saved, settings),
+          isBalanceHidden,
+        ),
         const SizedBox(height: 16),
         Row(
           children: [
-            Expanded(child: _buildInfoCard(context, 'Income', CurrencyFormatter.format(income, settings), Theme.of(context).colorScheme.secondary, Icons.arrow_downward)),
+            Expanded(child: _buildInfoCard(context, 'Income', isBalanceHidden ? '••••' : CurrencyFormatter.format(income, settings), Theme.of(context).colorScheme.secondary, Icons.arrow_downward)),
             const SizedBox(width: 16),
-            Expanded(child: _buildInfoCard(context, 'Expense', CurrencyFormatter.format(expense, settings), Theme.of(context).colorScheme.error, Icons.arrow_upward)),
+            Expanded(child: _buildInfoCard(context, 'Expense', isBalanceHidden ? '••••' : CurrencyFormatter.format(expense, settings), Theme.of(context).colorScheme.error, Icons.arrow_upward)),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildBalanceCard(BuildContext context, String amount, String saved) {
+  Widget _buildBalanceCard(BuildContext context, WidgetRef ref, String amount, String saved, bool isHidden) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
       width: double.infinity,
@@ -65,14 +74,28 @@ class SummaryCards extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: Text(
-                  'Total Balance',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: colorScheme.onPrimary.withValues(alpha: 0.9),
-                    fontWeight: FontWeight.w500,
-                  ),
-                  overflow: TextOverflow.ellipsis,
+                child: Row(
+                  children: [
+                    Text(
+                      'Total Balance',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: colorScheme.onPrimary.withValues(alpha: 0.9),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    GestureDetector(
+                      onTap: () {
+                        ref.read(hideBalanceProvider.notifier).toggle();
+                      },
+                      child: Icon(
+                        isHidden ? Icons.visibility_off_rounded : Icons.visibility_rounded,
+                        color: colorScheme.onPrimary.withValues(alpha: 0.7),
+                        size: 20,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               Container(
@@ -87,7 +110,7 @@ class SummaryCards extends ConsumerWidget {
                     Icon(Icons.savings, size: 14, color: colorScheme.onPrimary),
                     const SizedBox(width: 4),
                     Text(
-                      'Saved $saved',
+                      isHidden ? 'Saved ••••' : 'Saved $saved',
                       style: TextStyle(
                         fontSize: 12,
                         color: colorScheme.onPrimary,
@@ -101,7 +124,7 @@ class SummaryCards extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            amount,
+            isHidden ? '••••••••' : amount,
             style: TextStyle(
               fontSize: 44,
               fontWeight: FontWeight.w800,
@@ -192,6 +215,7 @@ class SpendingOverview extends ConsumerWidget {
     final month = ref.watch(monthSpendingProvider);
     final income = ref.watch(totalIncomeProvider);
     final expense = ref.watch(totalExpenseProvider);
+    final thisWeekDays = ref.watch(thisWeekChartProvider);
     final colorScheme = Theme.of(context).colorScheme;
     
     double progress = 0.0;
@@ -200,6 +224,7 @@ class SpendingOverview extends ConsumerWidget {
       if (progress > 1.0) progress = 1.0;
     }
     final settings = ref.watch(settingsProvider).value ?? const SettingsEntity();
+    final formatCurrency = NumberFormat.compactSimpleCurrency();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -224,11 +249,90 @@ class SpendingOverview extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: 24),
+        // Spending Chart
+        if (thisWeekDays.isNotEmpty && thisWeekDays.any((d) => d.amount > 0)) ...[
+          Text(
+            'This Week',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            height: 150,
+            child: BarChart(
+              BarChartData(
+                alignment: BarChartAlignment.spaceAround,
+                maxY: thisWeekDays.map((d) => d.amount).reduce((a, b) => a > b ? a : b) * 1.2,
+                barTouchData: BarTouchData(
+                  touchTooltipData: BarTouchTooltipData(
+                    getTooltipColor: (group) => colorScheme.inverseSurface,
+                    getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                      return BarTooltipItem(
+                        formatCurrency.format(rod.toY),
+                        TextStyle(color: colorScheme.onInverseSurface, fontWeight: FontWeight.bold),
+                      );
+                    },
+                  ),
+                ),
+                titlesData: FlTitlesData(
+                  show: true,
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      getTitlesWidget: (value, meta) {
+                        final index = value.toInt();
+                        if (index < 0 || index >= thisWeekDays.length) return const SizedBox();
+                        final date = thisWeekDays[index].date;
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            DateFormat.E().format(date),
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                ),
+                gridData: const FlGridData(show: false),
+                borderData: FlBorderData(show: false),
+                barGroups: thisWeekDays.asMap().entries.map((e) {
+                  return BarChartGroupData(
+                    x: e.key,
+                    barRods: [
+                      BarChartRodData(
+                        toY: e.value.amount,
+                        gradient: LinearGradient(
+                          colors: [colorScheme.error.withValues(alpha: 0.7), colorScheme.error],
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                        ),
+                        width: 14,
+                        borderRadius: const BorderRadius.only(topLeft: Radius.circular(6), topRight: Radius.circular(6)),
+                      ),
+                    ],
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+        ],
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Spending vs Income',
+              'Spending vs Income (Month)',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
@@ -359,15 +463,55 @@ class RecentTransactions extends ConsumerWidget {
           );
         }
 
+        final recentTxs = transactions.take(8).toList();
+        
+        final Map<String, List<TransactionEntity>> grouped = {};
+        final now = DateTime.now();
+        final yesterday = now.subtract(const Duration(days: 1));
+        
+        for (var t in recentTxs) {
+          final tDate = t.date;
+          String dateLabel;
+          
+          if (tDate.year == now.year && tDate.month == now.month && tDate.day == now.day) {
+            dateLabel = 'Today';
+          } else if (tDate.year == yesterday.year && tDate.month == yesterday.month && tDate.day == yesterday.day) {
+            dateLabel = 'Yesterday';
+          } else {
+            dateLabel = DateFormat.yMMMd().format(tDate);
+          }
+          
+          grouped.putIfAbsent(dateLabel, () => []).add(t);
+        }
+
         return ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: transactions.length > 5 ? 5 : transactions.length,
+          itemCount: grouped.length,
           itemBuilder: (context, index) {
-            final t = transactions[index];
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: TransactionItem(transaction: t),
+            final dateLabel = grouped.keys.elementAt(index);
+            final dayTxs = grouped[dateLabel]!;
+            
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 4, top: 16, bottom: 8),
+                  child: Text(
+                    dateLabel,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: colorScheme.primary,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+                ...dayTxs.map((t) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: TransactionItem(transaction: t),
+                )),
+              ],
             );
           },
         );

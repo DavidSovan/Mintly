@@ -3,7 +3,9 @@ import 'package:moneytrackerapp/core/providers/global_providers.dart';
 import 'package:moneytrackerapp/domain/entities/budget.dart';
 import 'package:moneytrackerapp/presentation/dashboard/providers/dashboard_provider.dart';
 import 'package:moneytrackerapp/presentation/categories/providers/category_provider.dart';
-
+import 'package:moneytrackerapp/domain/entities/transaction.dart';
+import 'package:moneytrackerapp/domain/entities/settings.dart';
+import 'package:moneytrackerapp/presentation/settings/providers/settings_provider.dart';
 class BudgetsNotifier extends AsyncNotifier<List<BudgetEntity>> {
   @override
   Future<List<BudgetEntity>> build() async {
@@ -62,11 +64,13 @@ class BudgetProgress {
   final double remaining;
   final double progressPercentage;
   final String categoryName;
+  final List<TransactionEntity> transactions;
   
   BudgetProgress({
     required this.budget,
     required this.spent,
     required this.categoryName,
+    required this.transactions,
   }) : remaining = budget.amount - spent,
        progressPercentage = (budget.amount > 0) ? (spent / budget.amount).clamp(0.0, 1.0) : 0.0;
 }
@@ -97,7 +101,9 @@ final budgetProgressListProvider = Provider<AsyncValue<List<BudgetProgress>>>((r
       if (budget.period == 'monthly') {
         return t.date.year == now.year && t.date.month == now.month;
       } else if (budget.period == 'weekly') {
-        final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
+        final settings = ref.read(settingsProvider).value ?? const SettingsEntity();
+        int daysToSubtract = settings.firstDayOfWeek == 1 ? now.weekday - 1 : now.weekday % 7;
+        final startOfWeek = DateTime(now.year, now.month, now.day).subtract(Duration(days: daysToSubtract));
         final endOfWeek = startOfWeek.add(const Duration(days: 6));
         return t.date.isAfter(startOfWeek.subtract(const Duration(days: 1))) && 
                t.date.isBefore(endOfWeek.add(const Duration(days: 1)));
@@ -127,6 +133,7 @@ final budgetProgressListProvider = Provider<AsyncValue<List<BudgetProgress>>>((r
       budget: budget,
       spent: spent,
       categoryName: catName,
+      transactions: relevantTransactions.toList(),
     );
   }).toList();
   
