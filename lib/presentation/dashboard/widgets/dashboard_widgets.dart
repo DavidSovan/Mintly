@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moneytrackerapp/core/theme/design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:moneytrackerapp/presentation/dashboard/providers/dashboard_provider.dart';
 import 'package:moneytrackerapp/core/utils/currency_formatter.dart';
@@ -23,9 +24,9 @@ class SummaryCards extends ConsumerWidget {
         const SizedBox(height: 16),
         Row(
           children: [
-            Expanded(child: _buildInfoCard(context, 'Income', CurrencyFormatter.format(income, settings), Colors.green, Icons.arrow_downward)),
+            Expanded(child: _buildInfoCard(context, 'Income', CurrencyFormatter.format(income, settings), Theme.of(context).colorScheme.secondary, Icons.arrow_downward)),
             const SizedBox(width: 16),
-            Expanded(child: _buildInfoCard(context, 'Expense', CurrencyFormatter.format(expense, settings), Colors.red, Icons.arrow_upward)),
+            Expanded(child: _buildInfoCard(context, 'Expense', CurrencyFormatter.format(expense, settings), Theme.of(context).colorScheme.error, Icons.arrow_upward)),
           ],
         ),
       ],
@@ -239,7 +240,7 @@ class SpendingOverview extends ConsumerWidget {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
-                color: progress > 0.8 ? Colors.red : colorScheme.primary,
+                color: progress > 0.8 ? colorScheme.error : colorScheme.primary,
               ),
             ),
           ],
@@ -262,13 +263,13 @@ class SpendingOverview extends ConsumerWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: progress > 0.8 
-                      ? [Colors.orange, Colors.red] 
+                      ? [Colors.orange, colorScheme.error] 
                       : [colorScheme.primary, colorScheme.tertiary],
                 ),
                 borderRadius: BorderRadius.circular(6),
                 boxShadow: [
                   BoxShadow(
-                    color: (progress > 0.8 ? Colors.red : colorScheme.primary).withValues(alpha: 0.4),
+                    color: (progress > 0.8 ? colorScheme.error : colorScheme.primary).withValues(alpha: 0.4),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   )

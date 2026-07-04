@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:moneytrackerapp/core/theme/design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart' as p;
@@ -42,17 +43,19 @@ class SettingsScreen extends ConsumerWidget {
             children: [
               _buildSectionHeader(context, 'Preferences'),
               Card(
-                elevation: 0,
+                elevation: 2,
+                shadowColor: colorScheme.shadow.withValues(alpha: 0.1),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  side: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+                  borderRadius: BorderRadius.circular(16),
                 ),
+                clipBehavior: Clip.antiAlias,
+                margin: const EdgeInsets.symmetric(vertical: 4.0),
                 child: Column(
                   children: [
                     _buildSettingsTile(
                       context: context,
                       icon: Icons.attach_money,
-                      iconColor: Colors.green,
+                      iconColor: colorScheme.primary,
                       title: 'Currency',
                       subtitle: settings.currency,
                       trailing: const Icon(Icons.chevron_right),
@@ -71,7 +74,7 @@ class SettingsScreen extends ConsumerWidget {
                     _buildSettingsTile(
                       context: context,
                       icon: Icons.brightness_6,
-                      iconColor: Colors.purple,
+                      iconColor: colorScheme.secondary,
                       title: 'Theme',
                       subtitle: settings.themeMode.name.toUpperCase(),
                       trailing: const Icon(Icons.chevron_right),
@@ -91,7 +94,7 @@ class SettingsScreen extends ConsumerWidget {
                     _buildSettingsTile(
                       context: context,
                       icon: Icons.language,
-                      iconColor: Colors.blue,
+                      iconColor: colorScheme.primary,
                       title: 'Language',
                       subtitle: settings.language == 'en' ? 'English' : settings.language,
                       trailing: const Icon(Icons.chevron_right),
@@ -112,7 +115,7 @@ class SettingsScreen extends ConsumerWidget {
                     _buildSettingsTile(
                       context: context,
                       icon: Icons.numbers,
-                      iconColor: Colors.teal,
+                      iconColor: colorScheme.secondary,
                       title: 'Decimal Format',
                       subtitle: settings.decimalFormat == 2 ? '2 Decimals (e.g. 10.00)' : '0 Decimals (e.g. 10)',
                       trailing: Switch(
@@ -127,7 +130,7 @@ class SettingsScreen extends ConsumerWidget {
                     _buildSettingsTile(
                       context: context,
                       icon: Icons.calendar_today,
-                      iconColor: Colors.orange,
+                      iconColor: colorScheme.primary,
                       title: 'First day of week',
                       subtitle: settings.firstDayOfWeek == 1 ? 'Monday' : 'Sunday',
                       trailing: Switch(
@@ -142,7 +145,7 @@ class SettingsScreen extends ConsumerWidget {
                     _buildSettingsTile(
                       context: context,
                       icon: Icons.notifications,
-                      iconColor: Colors.amber,
+                      iconColor: colorScheme.secondary,
                       title: 'Notifications',
                       trailing: Switch(
                         value: settings.notificationsEnabled,
@@ -160,17 +163,19 @@ class SettingsScreen extends ConsumerWidget {
               _buildSectionHeader(context, 'Data Management'),
               
               Card(
-                elevation: 0,
+                elevation: 2,
+                shadowColor: colorScheme.shadow.withValues(alpha: 0.1),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  side: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+                  borderRadius: BorderRadius.circular(16),
                 ),
+                clipBehavior: Clip.antiAlias,
+                margin: const EdgeInsets.symmetric(vertical: 4.0),
                 child: Column(
                   children: [
                     _buildSettingsTile(
                       context: context,
                       icon: Icons.upload_file,
-                      iconColor: Colors.indigo,
+                      iconColor: colorScheme.primary,
                       title: 'Export Database',
                       subtitle: 'Backup your data safely.',
                       onTap: () async {
@@ -200,7 +205,7 @@ class SettingsScreen extends ConsumerWidget {
                     _buildSettingsTile(
                       context: context,
                       icon: Icons.download,
-                      iconColor: Colors.cyan,
+                      iconColor: colorScheme.secondary,
                       title: 'Restore Database',
                       subtitle: 'Replace data from a backup.',
                       onTap: () async {
@@ -240,7 +245,7 @@ class SettingsScreen extends ConsumerWidget {
                     _buildSettingsTile(
                       context: context,
                       icon: Icons.delete_sweep,
-                      iconColor: Colors.orange,
+                      iconColor: colorScheme.error,
                       title: 'Delete all data',
                       subtitle: 'Removes transactions and budgets.',
                       onTap: () async {
@@ -261,10 +266,10 @@ class SettingsScreen extends ConsumerWidget {
                     _buildSettingsTile(
                       context: context,
                       icon: Icons.warning,
-                      iconColor: Colors.red,
+                      iconColor: colorScheme.error,
                       title: 'Reset App',
                       subtitle: 'Deletes all data and restores defaults.',
-                      titleColor: Colors.red.shade700,
+                      titleColor: colorScheme.error,
                       onTap: () async {
                         final confirm = await _showConfirmDialog(
                           context, 
@@ -292,14 +297,14 @@ class SettingsScreen extends ConsumerWidget {
 
   Widget _buildSectionHeader(BuildContext context, String title) {
     return Padding(
-      padding: const EdgeInsets.only(left: 8.0, bottom: 12.0),
+      padding: const EdgeInsets.only(left: 16.0, bottom: 8.0, top: 16.0),
       child: Text(
         title.toUpperCase(),
         style: TextStyle(
           fontSize: 13,
           letterSpacing: 1.2,
           color: Theme.of(context).colorScheme.primary,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w700,
         ),
       ),
     );

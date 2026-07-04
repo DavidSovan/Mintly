@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moneytrackerapp/core/theme/design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:moneytrackerapp/presentation/categories/providers/category_provider.dart';
@@ -25,11 +26,23 @@ class CategoriesScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.category_outlined, size: 64, color: Colors.grey.shade400),
-                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.category_outlined, size: 64, color: Theme.of(context).colorScheme.primary),
+                  ),
+                  const SizedBox(height: 24),
                   Text(
-                    'No categories found.',
-                    style: TextStyle(fontSize: 18, color: Colors.grey.shade600, fontWeight: FontWeight.w500),
+                    'No categories yet',
+                    style: TextStyle(fontSize: 20, color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Tap the + button to create one.',
+                    style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
                 ],
               ),
@@ -42,11 +55,11 @@ class CategoriesScreen extends ConsumerWidget {
             itemBuilder: (context, index) {
               final cat = categories[index];
               return Card(
-                elevation: 0,
+                elevation: 2,
+                shadowColor: Colors.black.withValues(alpha: 0.05),
                 margin: const EdgeInsets.symmetric(vertical: 8),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -149,10 +162,12 @@ class CategoriesScreen extends ConsumerWidget {
         onPressed: () {
           context.push('/add-category');
         },
-        elevation: 2,
+        elevation: 6,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         icon: const Icon(Icons.add),
-        label: const Text('Add Category', style: TextStyle(fontWeight: FontWeight.w600)),
+        label: const Text('Add Category', style: TextStyle(fontWeight: FontWeight.w600, letterSpacing: 0.5)),
       ),
     );
   }

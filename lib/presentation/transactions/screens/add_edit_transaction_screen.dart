@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:moneytrackerapp/core/theme/design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
-import 'package:moneytrackerapp/domain/entities/category.dart';
 import 'package:moneytrackerapp/domain/entities/transaction.dart';
 import 'package:moneytrackerapp/presentation/dashboard/providers/dashboard_provider.dart';
 import 'package:moneytrackerapp/presentation/categories/providers/category_provider.dart';
@@ -126,177 +126,227 @@ class _AddEditTransactionScreenState extends ConsumerState<AddEditTransactionScr
     final isEditing = widget.transaction != null;
     final categoriesState = ref.watch(categoriesProvider);
     final accountsState = ref.watch(accountsProvider);
+    final colorScheme = Theme.of(context).colorScheme;
     
     return Scaffold(
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        title: Text(isEditing ? 'Edit Transaction' : 'Add Transaction'),
+        title: Text(isEditing ? 'Edit Transaction' : 'Add Transaction', style: const TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SegmentedButton<TransactionType>(
-                segments: const [
-                  ButtonSegment(value: TransactionType.expense, label: Text('Expense')),
-                  ButtonSegment(value: TransactionType.income, label: Text('Income')),
-                ],
-                selected: {_type},
-                onSelectionChanged: (selection) {
-                  setState(() {
-                    _type = selection.first;
-                  });
-                },
+      body: SafeArea(
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24.0),
+              decoration: BoxDecoration(
+                color: _type == TransactionType.income ? colorScheme.secondary.withValues(alpha: 0.1) : colorScheme.error.withValues(alpha: 0.1),
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _amountController,
-                decoration: const InputDecoration(
-                  labelText: 'Amount',
-                  prefixText: '\$ ',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                validator: (value) {
-                  if (value == null || value.isEmpty) return 'Please enter amount';
-                  if (double.tryParse(value) == null) return 'Invalid number';
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              categoriesState.when(
-                data: (categories) {
-                  final filteredCategories = categories.where((c) => c.type == _type).toList();
-                  
-                  // Ensure selected category is valid for current type
-                  if (_selectedCategory != null && 
-                      !filteredCategories.any((c) => c.name == _selectedCategory)) {
-                    // We can't mutate state during build cleanly here, but we can let it be null.
-                    // For simplicity, we just keep the invalid one or set it to null.
-                  }
-
-                  return DropdownButtonFormField<String>(
-                    value: filteredCategories.any((c) => c.id == _selectedCategory || c.name == _selectedCategory) 
-                        ? (filteredCategories.firstWhere((c) => c.id == _selectedCategory || c.name == _selectedCategory).id) 
-                        : null,
-                    decoration: const InputDecoration(
-                      labelText: 'Category',
-                      border: OutlineInputBorder(),
-                    ),
-                    items: filteredCategories.map((cat) {
-                      return DropdownMenuItem(
-                        value: cat.id,
-                        child: Row(
-                          children: [
-                            Icon(IconData(cat.iconCodePoint, fontFamily: 'MaterialIcons'), color: Color(cat.colorValue)),
-                            const SizedBox(width: 8),
-                            Text(cat.name),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (val) {
-                      setState(() {
-                        _selectedCategory = val;
-                      });
-                    },
-                    validator: (value) => value == null ? 'Please select a category' : null,
-                  );
-                },
-                loading: () => const CircularProgressIndicator(),
-                error: (e, st) => Text('Error loading categories: $e'),
-              ),
-              const SizedBox(height: 16),
-              accountsState.when(
-                data: (accounts) {
-                  return DropdownButtonFormField<String>(
-                    value: accounts.any((a) => a.id == _selectedAccountId) ? _selectedAccountId : null,
-                    decoration: const InputDecoration(
-                      labelText: 'Account',
-                      border: OutlineInputBorder(),
-                    ),
-                    items: accounts.map((acc) {
-                      return DropdownMenuItem(
-                        value: acc.id,
-                        child: Row(
-                          children: [
-                            Icon(IconData(acc.iconCodePoint, fontFamily: 'MaterialIcons'), color: Color(acc.colorValue)),
-                            const SizedBox(width: 8),
-                            Text(acc.name),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (val) {
-                      setState(() {
-                        _selectedAccountId = val;
-                      });
-                    },
-                    validator: (value) => value == null ? 'Please select an account' : null,
-                  );
-                },
-                loading: () => const CircularProgressIndicator(),
-                error: (e, st) => Text('Error loading accounts: $e'),
-              ),
-              const SizedBox(height: 16),
-              Row(
+              child: Column(
                 children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      icon: const Icon(Icons.calendar_today),
-                      label: Text(DateFormat.yMMMd().format(_selectedDate)),
-                      onPressed: _pickDate,
+                  SegmentedButton<TransactionType>(
+                    segments: const [
+                      ButtonSegment(value: TransactionType.expense, label: Text('Expense')),
+                      ButtonSegment(value: TransactionType.income, label: Text('Income')),
+                    ],
+                    selected: {_type},
+                    onSelectionChanged: (selection) {
+                      setState(() {
+                        _type = selection.first;
+                        _selectedCategory = null; // reset category on type change
+                      });
+                    },
+                    style: SegmentedButton.styleFrom(
+                      selectedForegroundColor: Colors.white,
+                      selectedBackgroundColor: _type == TransactionType.income ? colorScheme.secondary : colorScheme.error,
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      icon: const Icon(Icons.access_time),
-                      label: Text(_selectedTime.format(context)),
-                      onPressed: _pickTime,
+                  const SizedBox(height: 32),
+                  Form(
+                    key: _formKey,
+                    child: TextFormField(
+                      controller: _amountController,
+                      autofocus: !isEditing,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 48, fontWeight: FontWeight.w800, color: _type == TransactionType.income ? colorScheme.secondary : colorScheme.error),
+                      decoration: InputDecoration(
+                        hintText: '0.00',
+                        prefixText: '\$ ',
+                        prefixStyle: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: colorScheme.onSurface.withValues(alpha: 0.5)),
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                        contentPadding: EdgeInsets.zero,
+                        filled: false,
+                      ),
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) return 'Please enter amount';
+                        final val = double.tryParse(value);
+                        if (val == null || val <= 0) return 'Invalid amount';
+                        return null;
+                      },
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _noteController,
-                decoration: const InputDecoration(
-                  labelText: 'Note (Optional)',
-                  border: OutlineInputBorder(),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Category', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: colorScheme.onSurfaceVariant)),
+                    const SizedBox(height: 12),
+                    categoriesState.when(
+                      data: (categories) {
+                        final filteredCategories = categories.where((c) => c.type == _type).toList();
+                        return Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: filteredCategories.map((cat) {
+                            final isSelected = _selectedCategory == cat.id || _selectedCategory == cat.name;
+                            return ChoiceChip(
+                              label: Text(cat.name),
+                              selected: isSelected,
+                              avatar: Icon(IconData(cat.iconCodePoint, fontFamily: 'MaterialIcons'), color: isSelected ? Colors.white : Color(cat.colorValue), size: 18),
+                              onSelected: (selected) {
+                                if (selected) {
+                                  setState(() {
+                                    _selectedCategory = cat.id;
+                                  });
+                                }
+                              },
+                              selectedColor: colorScheme.primary,
+                              labelStyle: TextStyle(color: isSelected ? Colors.white : colorScheme.onSurface),
+                            );
+                          }).toList(),
+                        );
+                      },
+                      loading: () => const CircularProgressIndicator(),
+                      error: (e, st) => Text('Error loading categories: $e'),
+                    ),
+                    const SizedBox(height: 24),
+                    Text('Account', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: colorScheme.onSurfaceVariant)),
+                    const SizedBox(height: 12),
+                    accountsState.when(
+                      data: (accounts) {
+                        return DropdownButtonFormField<String>(
+                          value: accounts.any((a) => a.id == _selectedAccountId) ? _selectedAccountId : null,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                            filled: true,
+                            fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                          ),
+                          items: accounts.map((acc) {
+                            return DropdownMenuItem(
+                              value: acc.id,
+                              child: Row(
+                                children: [
+                                  Icon(IconData(acc.iconCodePoint, fontFamily: 'MaterialIcons'), color: Color(acc.colorValue)),
+                                  const SizedBox(width: 12),
+                                  Text(acc.name, style: const TextStyle(fontWeight: FontWeight.w600)),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (val) {
+                            setState(() {
+                              _selectedAccountId = val;
+                            });
+                          },
+                          validator: (value) => value == null ? 'Please select an account' : null,
+                        );
+                      },
+                      loading: () => const CircularProgressIndicator(),
+                      error: (e, st) => Text('Error loading accounts: $e'),
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: InkWell(
+                            onTap: _pickDate,
+                            borderRadius: BorderRadius.circular(16),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.calendar_today, size: 20, color: colorScheme.primary),
+                                  const SizedBox(width: 8),
+                                  Text(DateFormat.yMMMd().format(_selectedDate), style: const TextStyle(fontWeight: FontWeight.w600)),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: InkWell(
+                            onTap: _pickTime,
+                            borderRadius: BorderRadius.circular(16),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.access_time, size: 20, color: colorScheme.primary),
+                                  const SizedBox(width: 8),
+                                  Text(_selectedTime.format(context), style: const TextStyle(fontWeight: FontWeight.w600)),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    TextFormField(
+                      controller: _noteController,
+                      decoration: InputDecoration(
+                        labelText: 'Note (Optional)',
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                        filled: true,
+                        fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton(
+                        onPressed: () {
+                          if (_selectedCategory == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select a category')));
+                            return;
+                          }
+                          _saveTransaction();
+                        },
+                        style: FilledButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        ),
+                        child: Text(isEditing ? 'Update Transaction' : 'Save Transaction', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                    const SizedBox(height: 40),
+                  ],
                 ),
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _paymentMethodController,
-                decoration: const InputDecoration(
-                  labelText: 'Payment Method (e.g. Card, Cash)',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              OutlinedButton.icon(
-                icon: const Icon(Icons.attach_file),
-                label: Text(_attachmentPath == null ? 'Add Attachment' : 'Attachment Added'),
-                onPressed: () {
-                  setState(() {
-                    _attachmentPath = '/fake/path/to/receipt.jpg';
-                  });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Simulated adding attachment')),
-                  );
-                },
-              ),
-              const SizedBox(height: 32),
-              FilledButton(
-                onPressed: _saveTransaction,
-                style: FilledButton.styleFrom(padding: const EdgeInsets.all(16)),
-                child: Text(isEditing ? 'Update' : 'Save', style: const TextStyle(fontSize: 18)),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

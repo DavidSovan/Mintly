@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 import 'package:moneytrackerapp/domain/entities/goal.dart';
 import 'package:moneytrackerapp/presentation/goals/providers/goals_provider.dart';
+import 'package:moneytrackerapp/core/theme/design_system.dart';
 
 class AddEditGoalScreen extends ConsumerStatefulWidget {
   final GoalEntity? goal;
@@ -59,8 +60,8 @@ class _AddEditGoalScreenState extends ConsumerState<AddEditGoalScreen> {
       final confirm = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: const Text('Delete Goal'),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Text('Delete Goal', style: TextStyle(fontWeight: FontWeight.bold)),
           content: Text('Are you sure you want to delete "${widget.goal!.name}"?'),
           actions: [
             TextButton(
@@ -70,7 +71,7 @@ class _AddEditGoalScreenState extends ConsumerState<AddEditGoalScreen> {
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
               style: FilledButton.styleFrom(
-                backgroundColor: Colors.red.shade400,
+                backgroundColor: Theme.of(context).colorScheme.error,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
               child: const Text('Delete'),
@@ -238,17 +239,9 @@ class _AddEditGoalScreenState extends ConsumerState<AddEditGoalScreen> {
               const SizedBox(height: 40),
               
               // Save Button
-              FilledButton(
+              PrimaryButton(
+                text: widget.goal == null ? 'Create Goal' : 'Save Changes',
                 onPressed: _saveGoal,
-                style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  elevation: 2,
-                ),
-                child: Text(
-                  widget.goal == null ? 'Create Goal' : 'Save Changes', 
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)
-                ),
               ),
               const SizedBox(height: 24),
             ],

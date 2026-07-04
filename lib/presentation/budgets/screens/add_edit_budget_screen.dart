@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moneytrackerapp/core/theme/design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
@@ -84,28 +85,28 @@ class _AddEditBudgetScreenState extends ConsumerState<AddEditBudgetScreen> {
               icon: const Icon(Icons.delete_outline),
               color: Colors.red.shade400,
               onPressed: () async {
-                final confirm = await showDialog<bool>(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                    title: const Text('Delete Budget'),
-                    content: const Text('Are you sure you want to delete this budget?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(false),
-                        child: const Text('Cancel'),
+              final confirm = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  title: const Text('Delete Budget', style: TextStyle(fontWeight: FontWeight.bold)),
+                  content: const Text('Are you sure you want to delete this budget?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: const Text('Cancel'),
+                    ),
+                    FilledButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.error,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
-                      FilledButton(
-                        onPressed: () => Navigator.of(context).pop(true),
-                        style: FilledButton.styleFrom(
-                          backgroundColor: Colors.red.shade400,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                        child: const Text('Delete'),
-                      ),
-                    ],
-                  ),
-                );
+                      child: const Text('Delete'),
+                    ),
+                  ],
+                ),
+              );
 
                 if (confirm == true && context.mounted) {
                   ref.read(budgetsProvider.notifier).deleteBudget(widget.budget!.id);

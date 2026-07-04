@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moneytrackerapp/core/theme/design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -33,7 +34,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               title: const Text('Add Funds', style: TextStyle(fontWeight: FontWeight.bold)),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -173,16 +174,23 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.flag_outlined, size: 64, color: Colors.grey.shade400),
-                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.flag_outlined, size: 64, color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.6)),
+                  ),
+                  const SizedBox(height: 24),
                   Text(
                     'No savings goals yet.',
-                    style: TextStyle(fontSize: 18, color: Colors.grey.shade600, fontWeight: FontWeight.w500),
+                    style: TextStyle(fontSize: 20, color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w700, letterSpacing: -0.5),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Add a goal to start tracking!',
-                    style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+                    style: TextStyle(fontSize: 15, color: Theme.of(context).colorScheme.onSurfaceVariant, fontWeight: FontWeight.w500),
                   ),
                 ],
               ),
@@ -201,11 +209,11 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
               final progressPercent = (progress * 100).clamp(0, 100).toInt();
 
               return Card(
-                elevation: 0,
-                margin: const EdgeInsets.symmetric(vertical: 8.0),
+                elevation: 4,
+                shadowColor: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.1),
+                margin: const EdgeInsets.symmetric(vertical: 10.0),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moneytrackerapp/core/theme/design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:moneytrackerapp/presentation/calendar/providers/calendar_provider.dart';
@@ -41,15 +42,14 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             padding: const EdgeInsets.only(bottom: 12.0),
             decoration: BoxDecoration(
               color: colorScheme.surface,
-              borderRadius: BorderRadius.circular(32),
+              borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: colorScheme.shadow.withValues(alpha: 0.08),
-                  blurRadius: 24,
-                  offset: const Offset(0, 8),
+                  color: colorScheme.shadow.withValues(alpha: 0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
                 )
               ],
-              border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.3)),
             ),
             child: TableCalendar(
               firstDay: DateTime.utc(2020, 1, 1),
@@ -135,14 +135,14 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                             decoration: BoxDecoration(
-                              color: isExpense ? Colors.red.withValues(alpha: 0.1) : Colors.green.withValues(alpha: 0.1),
+                              color: colorScheme.error.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
                               CurrencyFormatter.format(total, settings),
                               style: TextStyle(
                                 fontSize: 9, 
-                                color: isExpense ? Colors.red.shade700 : Colors.green.shade700, 
+                                color: colorScheme.error, 
                                 fontWeight: FontWeight.w800,
                                 letterSpacing: -0.2,
                               ),

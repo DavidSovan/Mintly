@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moneytrackerapp/core/theme/design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
@@ -83,11 +84,12 @@ class _IncomeExpenseBarChart extends ConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
-      elevation: 0,
+      elevation: 2,
+      shadowColor: colorScheme.shadow.withValues(alpha: 0.1),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+        borderRadius: BorderRadius.circular(16),
       ),
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -114,9 +116,16 @@ class _IncomeExpenseBarChart extends ConsumerWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.insert_chart_outlined, size: 48, color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
-                          const SizedBox(height: 8),
-                          Text('No data for this period', style: TextStyle(color: colorScheme.onSurfaceVariant)),
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: colorScheme.primary.withValues(alpha: 0.1),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(Icons.insert_chart_outlined, size: 32, color: colorScheme.primary),
+                          ),
+                          const SizedBox(height: 16),
+                          Text('No data for this period', style: TextStyle(color: colorScheme.onSurfaceVariant, fontWeight: FontWeight.w500)),
                         ],
                       ),
                     );
@@ -181,7 +190,7 @@ class _IncomeExpenseBarChart extends ConsumerWidget {
                           barRods: [
                             BarChartRodData(
                               toY: income,
-                              color: Colors.green.shade500,
+                              color: colorScheme.secondary,
                               width: 32,
                               borderRadius: const BorderRadius.only(topLeft: Radius.circular(6), topRight: Radius.circular(6)),
                             ),
@@ -192,7 +201,7 @@ class _IncomeExpenseBarChart extends ConsumerWidget {
                           barRods: [
                             BarChartRodData(
                               toY: expense,
-                              color: Colors.red.shade500,
+                              color: colorScheme.error,
                               width: 32,
                               borderRadius: const BorderRadius.only(topLeft: Radius.circular(6), topRight: Radius.circular(6)),
                             ),
@@ -250,9 +259,16 @@ class _CategoryPieChart extends ConsumerWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.donut_large, size: 48, color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
-                          const SizedBox(height: 8),
-                          Text('No expenses in this period', style: TextStyle(color: colorScheme.onSurfaceVariant)),
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: colorScheme.secondary.withValues(alpha: 0.1),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(Icons.donut_large, size: 32, color: colorScheme.secondary),
+                          ),
+                          const SizedBox(height: 16),
+                          Text('No expenses in this period', style: TextStyle(color: colorScheme.onSurfaceVariant, fontWeight: FontWeight.w500)),
                         ],
                       ),
                     );
@@ -390,9 +406,16 @@ class _SpendingLineChart extends ConsumerWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.show_chart, size: 48, color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
-                          const SizedBox(height: 8),
-                          Text('No trend data available', style: TextStyle(color: colorScheme.onSurfaceVariant)),
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: colorScheme.error.withValues(alpha: 0.1),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(Icons.show_chart, size: 32, color: colorScheme.error),
+                          ),
+                          const SizedBox(height: 16),
+                          Text('No trend data available', style: TextStyle(color: colorScheme.onSurfaceVariant, fontWeight: FontWeight.w500)),
                         ],
                       ),
                     );
@@ -488,7 +511,7 @@ class _SpendingLineChart extends ConsumerWidget {
                         LineChartBarData(
                           spots: spots,
                           isCurved: true,
-                          color: Colors.red.shade500,
+                          color: colorScheme.error,
                           barWidth: 4,
                           isStrokeCapRound: true,
                           dotData: FlDotData(
@@ -496,9 +519,9 @@ class _SpendingLineChart extends ConsumerWidget {
                             getDotPainter: (spot, percent, barData, index) {
                               return FlDotCirclePainter(
                                 radius: 4,
-                                color: Colors.white,
+                                color: colorScheme.surface,
                                 strokeWidth: 2,
-                                strokeColor: Colors.red.shade500,
+                                strokeColor: colorScheme.error,
                               );
                             },
                           ),
@@ -508,8 +531,8 @@ class _SpendingLineChart extends ConsumerWidget {
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [
-                                Colors.red.shade500.withValues(alpha: 0.3),
-                                Colors.red.shade500.withValues(alpha: 0.0),
+                                colorScheme.error.withValues(alpha: 0.3),
+                                colorScheme.error.withValues(alpha: 0.0),
                               ],
                             ),
                           ),

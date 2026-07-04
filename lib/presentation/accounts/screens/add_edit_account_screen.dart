@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moneytrackerapp/core/theme/design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
@@ -99,17 +100,21 @@ class _AddEditAccountScreenState extends ConsumerState<AddEditAccountScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Account Name Input
-              Text('Account Name', style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant, fontSize: 14)),
-              const SizedBox(height: 8),
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
+                  labelText: 'Account Name',
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
                   hintText: 'e.g., Main Checking, Cash...',
                   filled: true,
-                  fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                  fillColor: colorScheme.surface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
+                    borderSide: BorderSide(color: colorScheme.outlineVariant),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide(color: colorScheme.outlineVariant),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
@@ -126,19 +131,23 @@ class _AddEditAccountScreenState extends ConsumerState<AddEditAccountScreen> {
               const SizedBox(height: 24),
               
               // Initial Balance Input
-              Text('Initial Balance', style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant, fontSize: 14)),
-              const SizedBox(height: 8),
               TextFormField(
                 controller: _balanceController,
                 decoration: InputDecoration(
+                  labelText: 'Initial Balance',
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
                   hintText: '0.00',
                   prefixText: '\$ ',
                   prefixStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   filled: true,
-                  fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                  fillColor: colorScheme.surface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
+                    borderSide: BorderSide(color: colorScheme.outlineVariant),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide(color: colorScheme.outlineVariant),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
@@ -273,16 +282,34 @@ class _AddEditAccountScreenState extends ConsumerState<AddEditAccountScreen> {
               const SizedBox(height: 40),
               
               // Save Button
-              FilledButton(
-                onPressed: _saveAccount,
-                style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  elevation: 2,
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  gradient: LinearGradient(
+                    colors: [colorScheme.primary, colorScheme.primary.withValues(alpha: 0.8)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: colorScheme.primary.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    )
+                  ],
                 ),
-                child: Text(
-                  isEditing ? 'Save Changes' : 'Create Account', 
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)
+                child: ElevatedButton(
+                  onPressed: _saveAccount,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  ),
+                  child: Text(
+                    isEditing ? 'Save Changes' : 'Create Account', 
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: colorScheme.onPrimary, letterSpacing: 0.5)
+                  ),
                 ),
               ),
               const SizedBox(height: 24),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moneytrackerapp/core/theme/design_system.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:moneytrackerapp/presentation/dashboard/widgets/dashboard_widgets.dart';
@@ -188,6 +189,7 @@ class DashboardScreen extends ConsumerWidget {
   }
 
   Widget _buildQuickActions(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Row(
       children: [
         Expanded(
@@ -195,7 +197,7 @@ class DashboardScreen extends ConsumerWidget {
             context, 
             'Income', 
             Icons.arrow_downward, 
-            Colors.green.shade600, 
+            colorScheme.secondary, 
             () => context.push('/add-transaction', extra: TransactionType.income)
           ),
         ),
@@ -205,7 +207,7 @@ class DashboardScreen extends ConsumerWidget {
             context, 
             'Expense', 
             Icons.arrow_upward, 
-            Colors.red.shade600, 
+            colorScheme.error, 
             () => context.push('/add-transaction', extra: TransactionType.expense)
           ),
         ),
