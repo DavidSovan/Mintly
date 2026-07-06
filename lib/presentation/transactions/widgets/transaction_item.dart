@@ -12,6 +12,7 @@ import 'package:moneytrackerapp/presentation/dashboard/providers/dashboard_provi
 import 'package:moneytrackerapp/presentation/categories/providers/category_provider.dart';
 import 'package:moneytrackerapp/domain/entities/category.dart';
 
+import 'package:moneytrackerapp/l10n/app_localizations.dart';
 class TransactionItem extends ConsumerWidget {
   final TransactionEntity transaction;
 
@@ -44,17 +45,17 @@ class TransactionItem extends ConsumerWidget {
           context: context,
           builder: (context) {
             return AlertDialog(
-              title: const Text('Delete Transaction'),
-              content: const Text('Are you sure you want to delete this transaction?'),
+              title: Text(AppLocalizations.of(context)!.deleteTransaction),
+              content: Text(AppLocalizations.of(context)!.areYouSureDeleteTransaction),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(false),
-                  child: const Text('Cancel'),
+                  child: Text(AppLocalizations.of(context)!.cancel),
                 ),
                 FilledButton(
                   onPressed: () => Navigator.of(context).pop(true),
                   style: FilledButton.styleFrom(backgroundColor: colorScheme.error),
-                  child: const Text('Delete'),
+                  child: Text(AppLocalizations.of(context)!.delete),
                 ),
               ],
             );
@@ -64,7 +65,7 @@ class TransactionItem extends ConsumerWidget {
       onDismissed: (direction) {
         ref.read(transactionsProvider.notifier).deleteTransaction(transaction.id);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Transaction deleted')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.transactionDeleted)),
         );
       },
       background: Container(
@@ -74,7 +75,7 @@ class TransactionItem extends ConsumerWidget {
           color: colorScheme.error,
           borderRadius: BorderRadius.circular(16),
         ),
-        child: const Icon(Icons.delete, color: Colors.white),
+        child: Icon(Icons.delete, color: Colors.white),
       ),
       child: Container(
         clipBehavior: Clip.antiAlias,
@@ -167,14 +168,14 @@ class TransactionItem extends ConsumerWidget {
                     );
                     ref.read(transactionsProvider.notifier).addTransaction(duplicatedTransaction);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Transaction duplicated')),
+                      SnackBar(content: Text(AppLocalizations.of(context)!.transactionDuplicated)),
                     );
                   }
                 },
                 itemBuilder: (context) => [
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'duplicate',
-                    child: Text('Duplicate'),
+                    child: Text(AppLocalizations.of(context)!.duplicate),
                   ),
                 ],
               ),

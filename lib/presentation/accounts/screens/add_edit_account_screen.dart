@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 import 'package:moneytrackerapp/domain/entities/account.dart';
 import 'package:moneytrackerapp/presentation/accounts/providers/account_provider.dart';
 
+import 'package:moneytrackerapp/l10n/app_localizations.dart';
 class AddEditAccountScreen extends ConsumerStatefulWidget {
   final AccountEntity? account;
 
@@ -103,9 +104,9 @@ class _AddEditAccountScreenState extends ConsumerState<AddEditAccountScreen> {
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
-                  labelText: 'Account Name',
+                  labelText: AppLocalizations.of(context)!.accountName,
                   floatingLabelBehavior: FloatingLabelBehavior.always,
-                  hintText: 'e.g., Main Checking, Cash...',
+                  hintText: AppLocalizations.of(context)!.eG_MainChecking,
                   filled: true,
                   fillColor: colorScheme.surface,
                   border: OutlineInputBorder(
@@ -124,7 +125,7 @@ class _AddEditAccountScreenState extends ConsumerState<AddEditAccountScreen> {
                 ),
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 validator: (value) {
-                  if (value == null || value.trim().isEmpty) return 'Please enter a name';
+                  if (value == null || value.trim().isEmpty) return AppLocalizations.of(context)!.enterName;
                   return null;
                 },
               ),
@@ -134,9 +135,9 @@ class _AddEditAccountScreenState extends ConsumerState<AddEditAccountScreen> {
               TextFormField(
                 controller: _balanceController,
                 decoration: InputDecoration(
-                  labelText: 'Initial Balance',
+                  labelText: AppLocalizations.of(context)!.initialBalance,
                   floatingLabelBehavior: FloatingLabelBehavior.always,
-                  hintText: '0.00',
+                  hintText: AppLocalizations.of(context)!.zeroAmount,
                   prefixText: '\$ ',
                   prefixStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   filled: true,
@@ -158,8 +159,8 @@ class _AddEditAccountScreenState extends ConsumerState<AddEditAccountScreen> {
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 validator: (value) {
-                  if (value == null || value.isEmpty) return 'Please enter initial balance';
-                  if (double.tryParse(value) == null) return 'Invalid number';
+                  if (value == null || value.isEmpty) return AppLocalizations.of(context)!.enterInitialBalance;
+                  if (double.tryParse(value) == null) return AppLocalizations.of(context)!.invalidNumber;
                   return null;
                 },
               ),
@@ -168,7 +169,7 @@ class _AddEditAccountScreenState extends ConsumerState<AddEditAccountScreen> {
               // Icon Selection
               Row(
                 children: [
-                  Text('Icon', style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant, fontSize: 14)),
+                  Text(AppLocalizations.of(context)!.icon, style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant, fontSize: 14)),
                   const Spacer(),
                   Container(
                     width: 32,
@@ -233,7 +234,7 @@ class _AddEditAccountScreenState extends ConsumerState<AddEditAccountScreen> {
               const SizedBox(height: 32),
               
               // Color Selection
-              Text('Color', style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant, fontSize: 14)),
+              Text(AppLocalizations.of(context)!.color, style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant, fontSize: 14)),
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(16),

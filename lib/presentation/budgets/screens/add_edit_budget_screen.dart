@@ -7,6 +7,8 @@ import 'package:moneytrackerapp/domain/entities/budget.dart';
 import 'package:moneytrackerapp/presentation/budgets/providers/budgets_provider.dart';
 import 'package:moneytrackerapp/presentation/categories/providers/category_provider.dart';
 
+import 'package:moneytrackerapp/l10n/app_localizations.dart';
+import 'package:moneytrackerapp/core/utils/localization_helper.dart';
 class AddEditBudgetScreen extends ConsumerStatefulWidget {
   final BudgetEntity? budget;
 
@@ -42,7 +44,7 @@ class _AddEditBudgetScreenState extends ConsumerState<AddEditBudgetScreen> {
   void _saveBudget() {
     if (_formKey.currentState!.validate()) {
       if (_categoryIds.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select at least one category')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.pleaseSelectAtLeastOneCategory)));
         return;
       }
       
@@ -82,19 +84,19 @@ class _AddEditBudgetScreenState extends ConsumerState<AddEditBudgetScreen> {
         actions: [
           if (isEditing)
             IconButton(
-              icon: const Icon(Icons.delete_outline),
+              icon: Icon(Icons.delete_outline),
               color: Colors.red.shade400,
               onPressed: () async {
               final confirm = await showDialog<bool>(
                 context: context,
                 builder: (context) => AlertDialog(
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  title: const Text('Delete Budget', style: TextStyle(fontWeight: FontWeight.bold)),
-                  content: const Text('Are you sure you want to delete this budget?'),
+                  title: Text(AppLocalizations.of(context)!.deleteBudgetAction, style: TextStyle(fontWeight: FontWeight.bold)),
+                  content: Text(AppLocalizations.of(context)!.areYouSureDeleteBudget),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(false),
-                      child: const Text('Cancel'),
+                      child: Text(AppLocalizations.of(context)!.cancel),
                     ),
                     FilledButton(
                       onPressed: () => Navigator.of(context).pop(true),
@@ -102,7 +104,7 @@ class _AddEditBudgetScreenState extends ConsumerState<AddEditBudgetScreen> {
                         backgroundColor: Theme.of(context).colorScheme.error,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
-                      child: const Text('Delete'),
+                      child: Text(AppLocalizations.of(context)!.delete),
                     ),
                   ],
                 ),
@@ -128,12 +130,12 @@ class _AddEditBudgetScreenState extends ConsumerState<AddEditBudgetScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // Budget Amount Input
-                  Text('Budget Amount', style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant, fontSize: 14)),
-                  const SizedBox(height: 8),
+                  Text(AppLocalizations.of(context)!.budgetAmount, style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant, fontSize: 14)),
+                  SizedBox(height: 8),
                   TextFormField(
                     controller: _amountController,
                     decoration: InputDecoration(
-                      hintText: '0.00',
+                      hintText: AppLocalizations.of(context)!.zeroAmount,
                       prefixText: '\$ ',
                       prefixStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       filled: true,
@@ -156,17 +158,17 @@ class _AddEditBudgetScreenState extends ConsumerState<AddEditBudgetScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24),
                   
                   // Category Selection
-                  Text('Categories (Select one or more)', style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant, fontSize: 14)),
-                  const SizedBox(height: 12),
+                  Text(AppLocalizations.of(context)!.categoriesSelect, style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant, fontSize: 14)),
+                  SizedBox(height: 12),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
                     children: [
                       FilterChip(
-                        label: const Text('Overall Budget (All)'),
+                        label: Text(AppLocalizations.of(context)!.overallBudget),
                         selected: _categoryIds.contains('all'),
                         onSelected: (selected) {
                           setState(() {
@@ -180,7 +182,7 @@ class _AddEditBudgetScreenState extends ConsumerState<AddEditBudgetScreen> {
                       ),
                       ...expenseCategories.map((c) {
                         return FilterChip(
-                          label: Text(c.name),
+                          label: Text(c.name.getLocalized(context)),
                           selected: _categoryIds.contains(c.id),
                           onSelected: (selected) {
                             setState(() {
@@ -196,11 +198,11 @@ class _AddEditBudgetScreenState extends ConsumerState<AddEditBudgetScreen> {
                       }),
                     ],
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24),
                   
                   // Period Selection
-                  Text('Period', style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant, fontSize: 14)),
-                  const SizedBox(height: 8),
+                  Text(AppLocalizations.of(context)!.period, style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant, fontSize: 14)),
+                  SizedBox(height: 8),
                   DropdownButtonFormField<String>(
                     decoration: InputDecoration(
                       filled: true,
@@ -217,9 +219,9 @@ class _AddEditBudgetScreenState extends ConsumerState<AddEditBudgetScreen> {
                     ),
                     icon: Icon(Icons.expand_more, color: colorScheme.onSurfaceVariant),
                     initialValue: _period,
-                    items: const [
-                      DropdownMenuItem(value: 'monthly', child: Text('Monthly', style: TextStyle(fontWeight: FontWeight.w500))),
-                      DropdownMenuItem(value: 'weekly', child: Text('Weekly', style: TextStyle(fontWeight: FontWeight.w500))),
+                    items: [
+                      DropdownMenuItem(value: 'monthly', child: Text(AppLocalizations.of(context)!.monthlyPeriod, style: TextStyle(fontWeight: FontWeight.w500))),
+                      DropdownMenuItem(value: 'weekly', child: Text(AppLocalizations.of(context)!.weeklyPeriod, style: TextStyle(fontWeight: FontWeight.w500))),
                     ],
                     onChanged: (value) {
                       if (value != null) {
@@ -229,7 +231,7 @@ class _AddEditBudgetScreenState extends ConsumerState<AddEditBudgetScreen> {
                       }
                     },
                   ),
-                  const SizedBox(height: 40),
+                  SizedBox(height: 40),
                   
                   // Save Button
                   FilledButton(
@@ -244,13 +246,13 @@ class _AddEditBudgetScreenState extends ConsumerState<AddEditBudgetScreen> {
                       style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24),
                 ],
               ),
             ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => Center(child: CircularProgressIndicator()),
         error: (e, st) => Center(child: Text('Error loading categories: $e')),
       ),
     );

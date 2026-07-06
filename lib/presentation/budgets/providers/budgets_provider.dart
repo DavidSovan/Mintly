@@ -6,6 +6,8 @@ import 'package:moneytrackerapp/presentation/categories/providers/category_provi
 import 'package:moneytrackerapp/domain/entities/transaction.dart';
 import 'package:moneytrackerapp/domain/entities/settings.dart';
 import 'package:moneytrackerapp/presentation/settings/providers/settings_provider.dart';
+import 'package:moneytrackerapp/l10n/app_localizations.dart';
+import 'package:moneytrackerapp/core/utils/localization_helper.dart';
 class BudgetsNotifier extends AsyncNotifier<List<BudgetEntity>> {
   @override
   Future<List<BudgetEntity>> build() async {

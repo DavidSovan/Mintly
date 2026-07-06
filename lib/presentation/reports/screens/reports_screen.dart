@@ -4,6 +4,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:moneytrackerapp/presentation/reports/providers/reports_provider.dart';
 
+import 'package:moneytrackerapp/l10n/app_localizations.dart';
+import 'package:moneytrackerapp/presentation/settings/providers/settings_provider.dart';
 class ReportsScreen extends ConsumerWidget {
   const ReportsScreen({super.key});
 
@@ -21,7 +23,7 @@ class ReportsScreen extends ConsumerWidget {
             pinned: true,
             backgroundColor: colorScheme.surface,
             elevation: 0,
-            title: const Text('Reports', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
+            title: Text(AppLocalizations.of(context)!.reportsTitle, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
             centerTitle: true,
           ),
           SliverToBoxAdapter(
@@ -115,7 +117,7 @@ class _SummaryCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final dataState = ref.watch(incomeVsExpenseProvider);
     final colorScheme = Theme.of(context).colorScheme;
-    final formatCurrency = NumberFormat.simpleCurrency(decimalDigits: 0);
+    final formatCurrency = NumberFormat.simpleCurrency(name: ref.watch(settingsProvider).value?.currency, decimalDigits: 0);
 
     return dataState.when(
       data: (data) {
@@ -141,7 +143,7 @@ class _SummaryCard extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Net Balance',
+                AppLocalizations.of(context)!.netBalance,
                 style: TextStyle(
                   color: colorScheme.onPrimaryContainer.withValues(alpha: 0.7),
                   fontSize: 14,
@@ -198,7 +200,7 @@ class _SummaryCard extends ConsumerWidget {
                 children: [
                   Expanded(
                     child: _SummaryTile(
-                      label: 'Income',
+                      label: AppLocalizations.of(context)!.income,
                       amount: formatCurrency.format(income),
                       icon: Icons.arrow_downward_rounded,
                       color: Colors.green.shade600,
@@ -207,7 +209,7 @@ class _SummaryCard extends ConsumerWidget {
                   Container(width: 1, height: 40, color: colorScheme.onPrimaryContainer.withValues(alpha: 0.15)),
                   Expanded(
                     child: _SummaryTile(
-                      label: 'Expenses',
+                      label: AppLocalizations.of(context)!.expensesTitle,
                       amount: formatCurrency.format(expense),
                       icon: Icons.arrow_upward_rounded,
                       color: Colors.red.shade600,
@@ -390,14 +392,14 @@ class _IncomeExpenseBarChart extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final dataState = ref.watch(incomeVsExpenseProvider);
-    final formatCurrency = NumberFormat.compactSimpleCurrency();
+    final formatCurrency = NumberFormat.compactSimpleCurrency(name: ref.watch(settingsProvider).value?.currency);
     final colorScheme = Theme.of(context).colorScheme;
 
     return _ChartCard(
       icon: Icons.bar_chart_rounded,
       iconColor: colorScheme.primary,
-      title: 'Income vs Expenses',
-      subtitle: 'Side-by-side comparison',
+      title: AppLocalizations.of(context)!.incomeVsExpenses,
+      subtitle: AppLocalizations.of(context)!.sideBySideComparison,
       child: dataState.when(
         data: (data) {
           final income = data['income'] ?? 0.0;
@@ -406,7 +408,7 @@ class _IncomeExpenseBarChart extends ConsumerWidget {
           if (income == 0 && expense == 0) {
             return _EmptyState(
               icon: Icons.bar_chart_outlined,
-              message: 'No data for this period',
+              message: AppLocalizations.of(context)!.noDataForPeriod,
               color: colorScheme.primary,
             );
           }
@@ -419,9 +421,9 @@ class _IncomeExpenseBarChart extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _LegendDot(color: Colors.green.shade500, label: 'Income'),
+                  _LegendDot(color: Colors.green.shade500, label: AppLocalizations.of(context)!.income),
                   const SizedBox(width: 20),
-                  _LegendDot(color: colorScheme.error, label: 'Expenses'),
+                  _LegendDot(color: colorScheme.error, label: AppLocalizations.of(context)!.expensesTitle),
                 ],
               ),
               const SizedBox(height: 20),
@@ -533,20 +535,20 @@ class _CategoryPieChart extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final dataState = ref.watch(categoryExpenseProvider);
-    final formatCurrency = NumberFormat.compactSimpleCurrency();
+    final formatCurrency = NumberFormat.compactSimpleCurrency(name: ref.watch(settingsProvider).value?.currency);
     final colorScheme = Theme.of(context).colorScheme;
 
     return _ChartCard(
       icon: Icons.donut_large_rounded,
       iconColor: colorScheme.secondary,
-      title: 'Expenses by Category',
-      subtitle: 'Where your money goes',
+      title: AppLocalizations.of(context)!.expensesByCategory,
+      subtitle: AppLocalizations.of(context)!.whereYourMoneyGoes,
       child: dataState.when(
         data: (data) {
           if (data.isEmpty) {
             return _EmptyState(
               icon: Icons.pie_chart_outline_rounded,
-              message: 'No expenses in this period',
+              message: AppLocalizations.of(context)!.noExpensesPeriod,
               color: colorScheme.secondary,
             );
           }
@@ -640,7 +642,7 @@ class _CategoryPieChart extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Total Expenses',
+                      AppLocalizations.of(context)!.totalExpenses,
                       style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurface),
                     ),
                     Text(
@@ -669,20 +671,20 @@ class _SpendingLineChart extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final dataState = ref.watch(timeSeriesSpendingProvider);
     final period = ref.watch(selectedReportPeriodProvider);
-    final formatCurrency = NumberFormat.compactSimpleCurrency();
+    final formatCurrency = NumberFormat.compactSimpleCurrency(name: ref.watch(settingsProvider).value?.currency);
     final colorScheme = Theme.of(context).colorScheme;
 
     return _ChartCard(
       icon: Icons.trending_down_rounded,
       iconColor: colorScheme.error,
-      title: 'Spending Trend',
-      subtitle: 'Expense over time',
+      title: AppLocalizations.of(context)!.spendingTrend,
+      subtitle: AppLocalizations.of(context)!.expenseOverTime,
       child: dataState.when(
         data: (data) {
           if (data.isEmpty) {
             return _EmptyState(
               icon: Icons.show_chart_rounded,
-              message: 'No trend data available',
+              message: AppLocalizations.of(context)!.noTrendData,
               color: colorScheme.error,
             );
           }

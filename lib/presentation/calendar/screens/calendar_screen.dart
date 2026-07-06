@@ -8,6 +8,7 @@ import 'package:moneytrackerapp/core/utils/currency_formatter.dart';
 import 'package:moneytrackerapp/presentation/settings/providers/settings_provider.dart';
 import 'package:moneytrackerapp/domain/entities/settings.dart';
 
+import 'package:moneytrackerapp/l10n/app_localizations.dart';
 class CalendarScreen extends ConsumerStatefulWidget {
   const CalendarScreen({super.key});
 
@@ -29,7 +30,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Calendar', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 22, letterSpacing: -0.5)),
+        title: Text(AppLocalizations.of(context)!.calendarTitle, style: TextStyle(fontWeight: FontWeight.w800, fontSize: 22, letterSpacing: -0.5)),
         centerTitle: true,
         elevation: 0,
         scrolledUnderElevation: 0,
@@ -164,7 +165,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Row(
               children: [
-                Text('Transactions', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: colorScheme.onSurface, letterSpacing: -0.5)),
+                Text(AppLocalizations.of(context)!.transactionsTitle, style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: colorScheme.onSurface, letterSpacing: -0.5)),
                 const Spacer(),
                 totalsState.when(
                   data: (totals) {
@@ -215,7 +216,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                         ),
                         const SizedBox(height: 24),
                         Text(
-                          'No transactions',
+                          AppLocalizations.of(context)!.noTransactions,
                           style: TextStyle(fontSize: 20, color: colorScheme.onSurface, fontWeight: FontWeight.w800, letterSpacing: -0.5),
                         ),
                         const SizedBox(height: 8),

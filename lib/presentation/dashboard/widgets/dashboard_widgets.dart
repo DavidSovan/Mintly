@@ -9,6 +9,7 @@ import 'package:moneytrackerapp/domain/entities/transaction.dart';
 import 'package:moneytrackerapp/presentation/settings/providers/settings_provider.dart';
 import 'package:moneytrackerapp/presentation/transactions/widgets/transaction_item.dart';
 
+import 'package:moneytrackerapp/l10n/app_localizations.dart';
 class SummaryCards extends ConsumerWidget {
   const SummaryCards({super.key});
 
@@ -33,9 +34,9 @@ class SummaryCards extends ConsumerWidget {
         const SizedBox(height: 16),
         Row(
           children: [
-            Expanded(child: _buildInfoCard(context, 'Income', isBalanceHidden ? '••••' : CurrencyFormatter.format(income, settings), Theme.of(context).colorScheme.secondary, Icons.arrow_downward)),
+            Expanded(child: _buildInfoCard(context, AppLocalizations.of(context)!.income, isBalanceHidden ? '••••' : CurrencyFormatter.format(income, settings), Theme.of(context).colorScheme.secondary, Icons.arrow_downward)),
             const SizedBox(width: 16),
-            Expanded(child: _buildInfoCard(context, 'Expense', isBalanceHidden ? '••••' : CurrencyFormatter.format(expense, settings), Theme.of(context).colorScheme.error, Icons.arrow_upward)),
+            Expanded(child: _buildInfoCard(context, AppLocalizations.of(context)!.expense, isBalanceHidden ? '••••' : CurrencyFormatter.format(expense, settings), Theme.of(context).colorScheme.error, Icons.arrow_upward)),
           ],
         ),
       ],
@@ -77,7 +78,7 @@ class SummaryCards extends ConsumerWidget {
                 child: Row(
                   children: [
                     Text(
-                      'Total Balance',
+                      AppLocalizations.of(context)!.totalBalance,
                       style: TextStyle(
                         fontSize: 16,
                         color: colorScheme.onPrimary.withValues(alpha: 0.9),
@@ -110,7 +111,7 @@ class SummaryCards extends ConsumerWidget {
                     Icon(Icons.savings, size: 14, color: colorScheme.onPrimary),
                     const SizedBox(width: 4),
                     Text(
-                      isHidden ? 'Saved ••••' : 'Saved $saved',
+                      isHidden ? AppLocalizations.of(context)!.savedHidden : AppLocalizations.of(context)!.savedAmount(saved),
                       style: TextStyle(
                         fontSize: 12,
                         color: colorScheme.onPrimary,
@@ -135,7 +136,7 @@ class SummaryCards extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Updated just now',
+            AppLocalizations.of(context)!.updatedJustNow,
             style: TextStyle(
               fontSize: 12,
               color: colorScheme.onPrimary.withValues(alpha: 0.7),
@@ -224,13 +225,13 @@ class SpendingOverview extends ConsumerWidget {
       if (progress > 1.0) progress = 1.0;
     }
     final settings = ref.watch(settingsProvider).value ?? const SettingsEntity();
-    final formatCurrency = NumberFormat.compactSimpleCurrency();
+    final formatCurrency = NumberFormat.compactSimpleCurrency(name: ref.watch(settingsProvider).value?.currency);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Overview',
+          AppLocalizations.of(context)!.overview,
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.w800,
@@ -241,18 +242,18 @@ class SpendingOverview extends ConsumerWidget {
         const SizedBox(height: 16),
         Row(
           children: [
-            Expanded(child: _buildStatCard(context, 'Today', CurrencyFormatter.format(today, settings))),
+            Expanded(child: _buildStatCard(context, AppLocalizations.of(context)!.today, CurrencyFormatter.format(today, settings))),
             const SizedBox(width: 12),
-            Expanded(child: _buildStatCard(context, 'This Week', CurrencyFormatter.format(week, settings))),
+            Expanded(child: _buildStatCard(context, AppLocalizations.of(context)!.thisWeek, CurrencyFormatter.format(week, settings))),
             const SizedBox(width: 12),
-            Expanded(child: _buildStatCard(context, 'This Month', CurrencyFormatter.format(month, settings))),
+            Expanded(child: _buildStatCard(context, AppLocalizations.of(context)!.thisMonth, CurrencyFormatter.format(month, settings))),
           ],
         ),
         const SizedBox(height: 24),
         // Spending Chart
         if (thisWeekDays.isNotEmpty && thisWeekDays.any((d) => d.amount > 0)) ...[
           Text(
-            'This Week',
+            AppLocalizations.of(context)!.thisWeekPeriod,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
@@ -332,7 +333,7 @@ class SpendingOverview extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Spending vs Income (Month)',
+              AppLocalizations.of(context)!.spendingVsIncome,
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
@@ -442,7 +443,7 @@ class RecentTransactions extends ConsumerWidget {
                   Icon(Icons.receipt_long, size: 64, color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4)),
                   const SizedBox(height: 16),
                   Text(
-                    'No transactions yet',
+                    AppLocalizations.of(context)!.noTransactionsYet,
                     style: TextStyle(
                       fontSize: 16,
                       color: colorScheme.onSurfaceVariant,
@@ -451,7 +452,7 @@ class RecentTransactions extends ConsumerWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Add your first income or expense!',
+                    AppLocalizations.of(context)!.addFirstIncomeExpense,
                     style: TextStyle(
                       fontSize: 14,
                       color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),

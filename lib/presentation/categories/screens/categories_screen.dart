@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:moneytrackerapp/presentation/categories/providers/category_provider.dart';
 import 'package:moneytrackerapp/domain/entities/category.dart';
 
+import 'package:moneytrackerapp/l10n/app_localizations.dart';
+import 'package:moneytrackerapp/core/utils/localization_helper.dart';
 class CategoriesScreen extends ConsumerWidget {
   const CategoriesScreen({super.key});
 
@@ -15,7 +17,7 @@ class CategoriesScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Categories', style: TextStyle(fontWeight: FontWeight.w600)),
+        title: Text(AppLocalizations.of(context)!.categoriesTitle, style: TextStyle(fontWeight: FontWeight.w600)),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -37,12 +39,12 @@ class CategoriesScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    'No categories yet',
+                    AppLocalizations.of(context)!.noCategoriesYet,
                     style: TextStyle(fontSize: 20, color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Tap the + button to create one.',
+                    AppLocalizations.of(context)!.tapPlusToCreate,
                     style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
                 ],
@@ -60,7 +62,7 @@ class CategoriesScreen extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 8, bottom: 8, left: 4),
                   child: Text(
-                    'Income',
+                    AppLocalizations.of(context)!.incomeType,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -75,7 +77,7 @@ class CategoriesScreen extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 8, bottom: 8, left: 4),
                   child: Text(
-                    'Expenses',
+                    AppLocalizations.of(context)!.expensesTitle,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -100,7 +102,7 @@ class CategoriesScreen extends ConsumerWidget {
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         icon: const Icon(Icons.add),
-        label: const Text('Add Category', style: TextStyle(fontWeight: FontWeight.w600, letterSpacing: 0.5)),
+        label: Text(AppLocalizations.of(context)!.addCategoryAction, style: TextStyle(fontWeight: FontWeight.w600, letterSpacing: 0.5)),
       ),
     );
   }
@@ -190,12 +192,12 @@ class CategoriesScreen extends ConsumerWidget {
                       context: context,
                       builder: (context) => AlertDialog(
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                        title: const Text('Delete Category'),
-                        content: Text('Are you sure you want to delete "${cat.name}"?'),
+                        title: Text(AppLocalizations.of(context)!.deleteCategory),
+                        content: Text('${AppLocalizations.of(context)!.areYouSureDeletePrefix} "${cat.name.getLocalized(context)}"?'),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context, false),
-                            child: const Text('Cancel'),
+                            child: Text(AppLocalizations.of(context)!.cancel),
                           ),
                           FilledButton(
                             onPressed: () => Navigator.pop(context, true),
@@ -203,7 +205,7 @@ class CategoriesScreen extends ConsumerWidget {
                               backgroundColor: Colors.red.shade400,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             ),
-                            child: const Text('Delete'),
+                            child: Text(AppLocalizations.of(context)!.delete),
                           ),
                         ],
                       ),

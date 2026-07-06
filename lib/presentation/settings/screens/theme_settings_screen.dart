@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:moneytrackerapp/core/theme/app_theme.dart';
 import 'package:moneytrackerapp/presentation/settings/providers/settings_provider.dart';
 
+import 'package:moneytrackerapp/l10n/app_localizations.dart';
 class ThemeSettingsScreen extends ConsumerWidget {
   const ThemeSettingsScreen({super.key});
 
@@ -13,7 +14,7 @@ class ThemeSettingsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Theme Settings'),
+        title: Text(AppLocalizations.of(context)!.themeSettings),
       ),
       body: settingsAsync.when(
         data: (settings) {
@@ -21,28 +22,28 @@ class ThemeSettingsScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(24),
             children: [
               Text(
-                'Appearance',
+                AppLocalizations.of(context)!.appearance,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: theme.colorScheme.primary,
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               _buildAppearanceSelector(context, ref, settings.themeMode),
-              const SizedBox(height: 32),
+              SizedBox(height: 32),
               Text(
-                'Color Theme',
+                AppLocalizations.of(context)!.colorTheme,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: theme.colorScheme.primary,
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               _buildThemeGrid(context, ref, settings.themeId),
             ],
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => Center(child: CircularProgressIndicator()),
         error: (e, st) => Center(child: Text('Error loading settings: $e')),
       ),
     );
@@ -50,21 +51,21 @@ class ThemeSettingsScreen extends ConsumerWidget {
 
   Widget _buildAppearanceSelector(BuildContext context, WidgetRef ref, ThemeMode currentMode) {
     return SegmentedButton<ThemeMode>(
-      segments: const [
+      segments: [
         ButtonSegment(
           value: ThemeMode.system,
           icon: Icon(Icons.brightness_auto),
-          label: Text('System'),
+          label: Text(AppLocalizations.of(context)!.system),
         ),
         ButtonSegment(
           value: ThemeMode.light,
           icon: Icon(Icons.light_mode),
-          label: Text('Light'),
+          label: Text(AppLocalizations.of(context)!.light),
         ),
         ButtonSegment(
           value: ThemeMode.dark,
           icon: Icon(Icons.dark_mode),
-          label: Text('Dark'),
+          label: Text(AppLocalizations.of(context)!.dark),
         ),
       ],
       selected: {currentMode},
@@ -160,7 +161,7 @@ class _ThemePreviewCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Icon(Icons.menu, size: 14, color: colorScheme.onSurface),
-                          Text('App', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
+                          Text(AppLocalizations.of(context)!.app, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
                           Icon(Icons.person, size: 14, color: colorScheme.onSurface),
                         ],
                       ),
@@ -194,7 +195,7 @@ class _ThemePreviewCard extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8),
                       // Fake FAB
                       Align(
                         alignment: Alignment.bottomRight,

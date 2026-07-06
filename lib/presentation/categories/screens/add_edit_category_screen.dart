@@ -7,6 +7,7 @@ import 'package:moneytrackerapp/domain/entities/category.dart';
 import 'package:moneytrackerapp/domain/entities/transaction.dart';
 import 'package:moneytrackerapp/presentation/categories/providers/category_provider.dart';
 
+import 'package:moneytrackerapp/l10n/app_localizations.dart';
 class AddEditCategoryScreen extends ConsumerStatefulWidget {
   final CategoryEntity? category;
 
@@ -126,14 +127,14 @@ class _AddEditCategoryScreenState extends ConsumerState<AddEditCategoryScreen> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   showSelectedIcon: false,
-                  segments: const [
+                  segments: [
                     ButtonSegment(value: TransactionType.expense, label: Padding(
                       padding: EdgeInsets.symmetric(vertical: 12),
-                      child: Text('Expense', style: TextStyle(fontWeight: FontWeight.w600)),
+                      child: Text(AppLocalizations.of(context)!.expenseType, style: TextStyle(fontWeight: FontWeight.w600)),
                     )),
                     ButtonSegment(value: TransactionType.income, label: Padding(
                       padding: EdgeInsets.symmetric(vertical: 12),
-                      child: Text('Income', style: TextStyle(fontWeight: FontWeight.w600)),
+                      child: Text(AppLocalizations.of(context)!.incomeType, style: TextStyle(fontWeight: FontWeight.w600)),
                     )),
                   ],
                   selected: {_type},
@@ -150,8 +151,8 @@ class _AddEditCategoryScreenState extends ConsumerState<AddEditCategoryScreen> {
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(
-                  labelText: 'Category Name',
-                  hintText: 'e.g., Groceries, Salary...',
+                  labelText: AppLocalizations.of(context)!.categoryName,
+                  hintText: AppLocalizations.of(context)!.eG_Groceries,
                   floatingLabelBehavior: FloatingLabelBehavior.always,
                   filled: true,
                   fillColor: colorScheme.surface,
@@ -171,7 +172,7 @@ class _AddEditCategoryScreenState extends ConsumerState<AddEditCategoryScreen> {
                 ),
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 validator: (value) {
-                  if (value == null || value.trim().isEmpty) return 'Please enter a name';
+                  if (value == null || value.trim().isEmpty) return AppLocalizations.of(context)!.enterName;
                   return null;
                 },
               ),
@@ -180,7 +181,7 @@ class _AddEditCategoryScreenState extends ConsumerState<AddEditCategoryScreen> {
               // Icon Selection
               Row(
                 children: [
-                  Text('Icon', style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant, fontSize: 14)),
+                  Text(AppLocalizations.of(context)!.icon, style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant, fontSize: 14)),
                   const Spacer(),
                   Container(
                     width: 32,
@@ -245,7 +246,7 @@ class _AddEditCategoryScreenState extends ConsumerState<AddEditCategoryScreen> {
               const SizedBox(height: 32),
               
               // Color Selection
-              Text('Color', style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant, fontSize: 14)),
+              Text(AppLocalizations.of(context)!.color, style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant, fontSize: 14)),
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(16),

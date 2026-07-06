@@ -186,6 +186,46 @@ class AppThemeManager {
       surfaceColor: Color(0xFFFCE4EC),
       errorColor: Color(0xFFD32F2F),
     ),
+    AppThemeData(
+      id: 'cyberpunk',
+      name: 'Cyberpunk',
+      primaryColor: Color(0xFF00E5FF),
+      secondaryColor: Color(0xFFFF00FF),
+      surfaceColor: Color(0xFFE0F7FA),
+      errorColor: Color(0xFFFF003C),
+    ),
+    AppThemeData(
+      id: 'coffee_house',
+      name: 'Coffee House',
+      primaryColor: Color(0xFF5D4037),
+      secondaryColor: Color(0xFFD7CCC8),
+      surfaceColor: Color(0xFFEFEBE9),
+      errorColor: Color(0xFFD32F2F),
+    ),
+    AppThemeData(
+      id: 'midnight_city',
+      name: 'Midnight City',
+      primaryColor: Color(0xFF283593),
+      secondaryColor: Color(0xFF00E5FF),
+      surfaceColor: Color(0xFFE8EAF6),
+      errorColor: Color(0xFFEF5350),
+    ),
+    AppThemeData(
+      id: 'cherry_blossom',
+      name: 'Cherry Blossom',
+      primaryColor: Color(0xFFF06292),
+      secondaryColor: Color(0xFFF8BBD0),
+      surfaceColor: Color(0xFFFCE4EC),
+      errorColor: Color(0xFFE57373),
+    ),
+    AppThemeData(
+      id: 'dracula',
+      name: 'Dracula',
+      primaryColor: Color(0xFF6272A4),
+      secondaryColor: Color(0xFFFF79C6),
+      surfaceColor: Color(0xFFF8F8F2),
+      errorColor: Color(0xFFFF5555),
+    ),
   ];
 
   static AppThemeData getTheme(String id) {

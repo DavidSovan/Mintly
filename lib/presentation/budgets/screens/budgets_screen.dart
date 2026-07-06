@@ -7,6 +7,8 @@ import 'package:moneytrackerapp/presentation/budgets/providers/budgets_provider.
 import 'package:moneytrackerapp/domain/entities/transaction.dart';
 import 'package:moneytrackerapp/presentation/transactions/widgets/transaction_item.dart';
 
+import 'package:moneytrackerapp/l10n/app_localizations.dart';
+import 'package:moneytrackerapp/presentation/settings/providers/settings_provider.dart';
 class BudgetsScreen extends ConsumerWidget {
   const BudgetsScreen({super.key});
 
@@ -17,7 +19,7 @@ class BudgetsScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Budgets', style: TextStyle(fontWeight: FontWeight.w600)),
+        title: Text(AppLocalizations.of(context)!.budgetsTitle, style: TextStyle(fontWeight: FontWeight.w600)),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -39,12 +41,12 @@ class BudgetsScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    'No budgets configured.',
+                    AppLocalizations.of(context)!.noBudgetsConfigured,
                     style: TextStyle(fontSize: 20, color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w700, letterSpacing: -0.5),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Set a budget to manage your spending!',
+                    AppLocalizations.of(context)!.setBudgetToManage,
                     style: TextStyle(fontSize: 15, color: Theme.of(context).colorScheme.onSurfaceVariant, fontWeight: FontWeight.w500),
                   ),
                 ],
@@ -71,28 +73,28 @@ class BudgetsScreen extends ConsumerWidget {
         elevation: 2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         icon: const Icon(Icons.add),
-        label: const Text('Add Budget', style: TextStyle(fontWeight: FontWeight.w600)),
+        label: Text(AppLocalizations.of(context)!.addBudgetAction, style: TextStyle(fontWeight: FontWeight.w600)),
       ),
     );
   }
 }
 
-class BudgetCard extends StatefulWidget {
+class BudgetCard extends ConsumerStatefulWidget {
   final BudgetProgress bp;
   
   const BudgetCard({super.key, required this.bp});
 
   @override
-  State<BudgetCard> createState() => _BudgetCardState();
+  ConsumerState<BudgetCard> createState() => _BudgetCardState();
 }
 
-class _BudgetCardState extends State<BudgetCard> {
+class _BudgetCardState extends ConsumerState<BudgetCard> {
   bool _isExpanded = false;
 
   @override
   Widget build(BuildContext context) {
     final bp = widget.bp;
-    final formatCurrency = NumberFormat.simpleCurrency();
+    final formatCurrency = NumberFormat.simpleCurrency(name: ref.watch(settingsProvider).value?.currency);
     final bool isExceeded = bp.progressPercentage >= 1.0;
     final bool isWarning = bp.progressPercentage >= 0.8 && !isExceeded;
     
@@ -192,10 +194,10 @@ class _BudgetCardState extends State<BudgetCard> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _StatText(label: 'Budget', amount: formatCurrency.format(bp.budget.amount)),
-                  _StatText(label: 'Spent', amount: formatCurrency.format(bp.spent)),
+                  _StatText(label: AppLocalizations.of(context)!.budget, amount: formatCurrency.format(bp.budget.amount)),
+                  _StatText(label: AppLocalizations.of(context)!.spent, amount: formatCurrency.format(bp.spent)),
                   _StatText(
-                    label: 'Remaining', 
+                    label: AppLocalizations.of(context)!.remaining, 
                     amount: formatCurrency.format(bp.remaining),
                     color: bp.remaining < 0 ? Colors.red.shade700 : Colors.green.shade700,
                   ),
@@ -215,7 +217,7 @@ class _BudgetCardState extends State<BudgetCard> {
                         Icon(Icons.warning_amber_rounded, color: Colors.red.shade700, size: 20),
                         const SizedBox(width: 8),
                         Text(
-                          'Budget Exceeded!',
+                          AppLocalizations.of(context)!.budgetExceeded,
                           style: TextStyle(color: Colors.red.shade700, fontWeight: FontWeight.bold, fontSize: 13),
                         ),
                       ],
@@ -236,7 +238,7 @@ class _BudgetCardState extends State<BudgetCard> {
                         Icon(Icons.error_outline, color: Colors.orange.shade700, size: 20),
                         const SizedBox(width: 8),
                         Text(
-                          'Approaching Limit!',
+                          AppLocalizations.of(context)!.approachingLimit,
                           style: TextStyle(color: Colors.orange.shade700, fontWeight: FontWeight.bold, fontSize: 13),
                         ),
                       ],
@@ -260,7 +262,7 @@ class _BudgetCardState extends State<BudgetCard> {
                           children: [
                             const Divider(height: 24),
                             Text(
-                              'Expenses in this budget:',
+                              AppLocalizations.of(context)!.expensesInBudget,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(context).colorScheme.onSurface,

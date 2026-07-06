@@ -5,6 +5,9 @@ import 'package:go_router/go_router.dart';
 import 'package:moneytrackerapp/presentation/accounts/providers/account_provider.dart';
 import 'package:intl/intl.dart';
 
+import 'package:moneytrackerapp/l10n/app_localizations.dart';
+import 'package:moneytrackerapp/presentation/settings/providers/settings_provider.dart';
+import 'package:moneytrackerapp/core/utils/localization_helper.dart';
 class AccountsScreen extends ConsumerWidget {
   const AccountsScreen({super.key});
 
@@ -12,12 +15,12 @@ class AccountsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final accountsState = ref.watch(accountsProvider);
     final balances = ref.watch(accountBalancesProvider);
-    final formatCurrency = NumberFormat.simpleCurrency();
+    final formatCurrency = NumberFormat.simpleCurrency(name: ref.watch(settingsProvider).value?.currency);
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Accounts', style: TextStyle(fontWeight: FontWeight.w600)),
+        title: Text(AppLocalizations.of(context)!.accountsTitle, style: TextStyle(fontWeight: FontWeight.w600)),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -39,12 +42,12 @@ class AccountsScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    'No accounts yet',
+                    AppLocalizations.of(context)!.noAccountsYet,
                     style: TextStyle(fontSize: 20, color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Tap the + button to create one.',
+                    AppLocalizations.of(context)!.tapPlusToCreate,
                     style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
                 ],
@@ -89,7 +92,7 @@ class AccountsScreen extends ConsumerWidget {
                     ),
                     subtitle: Padding(
                       padding: const EdgeInsets.only(top: 4.0),
-                      child: Text('Current Balance', style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                      child: Text(AppLocalizations.of(context)!.currentBalance, style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                     ),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -117,12 +120,12 @@ class AccountsScreen extends ConsumerWidget {
                               context: context,
                               builder: (context) => AlertDialog(
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                title: const Text('Delete Account'),
-                                content: Text('Are you sure you want to delete "${acc.name}"?'),
+                                title: Text(AppLocalizations.of(context)!.deleteAccount),
+                                content: Text('${AppLocalizations.of(context)!.areYouSureDeletePrefix} "${acc.name.getLocalized(context)}"?'),
                                 actions: [
                                   TextButton(
                                     onPressed: () => Navigator.pop(context, false),
-                                    child: const Text('Cancel'),
+                                    child: Text(AppLocalizations.of(context)!.cancel),
                                   ),
                                   FilledButton(
                                     onPressed: () => Navigator.pop(context, true),
@@ -130,7 +133,7 @@ class AccountsScreen extends ConsumerWidget {
                                       backgroundColor: Colors.red.shade400,
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                     ),
-                                    child: const Text('Delete'),
+                                    child: Text(AppLocalizations.of(context)!.delete),
                                   ),
                                 ],
                               ),
@@ -160,7 +163,7 @@ class AccountsScreen extends ConsumerWidget {
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         icon: const Icon(Icons.add),
-        label: const Text('Add Account', style: TextStyle(fontWeight: FontWeight.w600, letterSpacing: 0.5)),
+        label: Text(AppLocalizations.of(context)!.addAccountAction, style: TextStyle(fontWeight: FontWeight.w600, letterSpacing: 0.5)),
       ),
     );
   }

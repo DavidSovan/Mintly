@@ -7,6 +7,7 @@ import 'package:moneytrackerapp/domain/entities/goal.dart';
 import 'package:moneytrackerapp/presentation/goals/providers/goals_provider.dart';
 import 'package:moneytrackerapp/core/theme/design_system.dart';
 
+import 'package:moneytrackerapp/l10n/app_localizations.dart';
 class AddEditGoalScreen extends ConsumerStatefulWidget {
   final GoalEntity? goal;
 
@@ -61,12 +62,12 @@ class _AddEditGoalScreenState extends ConsumerState<AddEditGoalScreen> {
         context: context,
         builder: (context) => AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: const Text('Delete Goal', style: TextStyle(fontWeight: FontWeight.bold)),
-          content: Text('Are you sure you want to delete "${widget.goal!.name}"?'),
+          title: Text(AppLocalizations.of(context)!.deleteGoalAction, style: TextStyle(fontWeight: FontWeight.bold)),
+          content: Text('${AppLocalizations.of(context)!.areYouSureDeletePrefix} "${widget.goal!.name}"?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
@@ -74,7 +75,7 @@ class _AddEditGoalScreenState extends ConsumerState<AddEditGoalScreen> {
                 backgroundColor: Theme.of(context).colorScheme.error,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text('Delete'),
+              child: Text(AppLocalizations.of(context)!.delete),
             ),
           ],
         ),
@@ -115,12 +116,12 @@ class _AddEditGoalScreenState extends ConsumerState<AddEditGoalScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Goal Name Input
-              Text('Goal Name', style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant, fontSize: 14)),
+              Text(AppLocalizations.of(context)!.goalName, style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant, fontSize: 14)),
               const SizedBox(height: 8),
               TextFormField(
                 initialValue: _name,
                 decoration: InputDecoration(
-                  hintText: 'e.g., Vacation, Emergency Fund...',
+                  hintText: AppLocalizations.of(context)!.eG_Vacation,
                   filled: true,
                   fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                   border: OutlineInputBorder(
@@ -136,7 +137,7 @@ class _AddEditGoalScreenState extends ConsumerState<AddEditGoalScreen> {
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Please enter a goal name';
+                    return AppLocalizations.of(context)!.enterGoalName;
                   }
                   return null;
                 },
@@ -147,12 +148,12 @@ class _AddEditGoalScreenState extends ConsumerState<AddEditGoalScreen> {
               const SizedBox(height: 24),
               
               // Target Amount Input
-              Text('Target Amount', style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant, fontSize: 14)),
+              Text(AppLocalizations.of(context)!.targetAmount, style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant, fontSize: 14)),
               const SizedBox(height: 8),
               TextFormField(
                 initialValue: _targetAmount > 0 ? _targetAmount.toString() : '',
                 decoration: InputDecoration(
-                  hintText: '0.00',
+                  hintText: AppLocalizations.of(context)!.zeroAmount,
                   prefixText: '\$ ',
                   prefixStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   filled: true,
@@ -171,10 +172,10 @@ class _AddEditGoalScreenState extends ConsumerState<AddEditGoalScreen> {
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter target amount';
+                    return AppLocalizations.of(context)!.enterTargetAmount;
                   }
                   if (double.tryParse(value) == null) {
-                    return 'Please enter a valid number';
+                    return AppLocalizations.of(context)!.enterValidNumberPlease;
                   }
                   return null;
                 },
@@ -185,7 +186,7 @@ class _AddEditGoalScreenState extends ConsumerState<AddEditGoalScreen> {
               const SizedBox(height: 24),
               
               // Deadline Selector
-              Text('Deadline', style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant, fontSize: 14)),
+              Text(AppLocalizations.of(context)!.deadline, style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onSurfaceVariant, fontSize: 14)),
               const SizedBox(height: 8),
               InkWell(
                 onTap: () async {

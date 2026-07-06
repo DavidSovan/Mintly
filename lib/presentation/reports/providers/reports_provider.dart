@@ -3,6 +3,8 @@ import 'package:moneytrackerapp/presentation/dashboard/providers/dashboard_provi
 import 'package:moneytrackerapp/presentation/categories/providers/category_provider.dart';
 import 'package:moneytrackerapp/domain/entities/settings.dart';
 import 'package:moneytrackerapp/presentation/settings/providers/settings_provider.dart';
+import 'package:moneytrackerapp/l10n/app_localizations.dart';
+import 'package:moneytrackerapp/core/utils/localization_helper.dart';
 enum ReportPeriod { daily, weekly, monthly, yearly }
 
 class SelectedReportPeriodNotifier extends Notifier<ReportPeriod> {

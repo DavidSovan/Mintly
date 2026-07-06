@@ -5,6 +5,7 @@ import 'package:moneytrackerapp/presentation/dashboard/widgets/dashboard_widgets
 import 'package:moneytrackerapp/presentation/dashboard/providers/dashboard_provider.dart';
 import 'package:moneytrackerapp/domain/entities/transaction.dart';
 
+import 'package:moneytrackerapp/l10n/app_localizations.dart';
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
@@ -23,7 +24,7 @@ class DashboardScreen extends ConsumerWidget {
               child: Icon(Icons.person, color: colorScheme.primary, size: 24),
             ),
             const SizedBox(width: 12),
-            Text('Mintly', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: colorScheme.onSurface, letterSpacing: -0.5)),
+            Text(AppLocalizations.of(context)!.mintlyTitle, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: colorScheme.onSurface, letterSpacing: -0.5)),
           ],
         ),
         backgroundColor: colorScheme.surface,
@@ -65,7 +66,7 @@ class DashboardScreen extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Recent Transactions',
+                      AppLocalizations.of(context)!.recentTransactionsTitle,
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -78,7 +79,7 @@ class DashboardScreen extends ConsumerWidget {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                       ),
                       onPressed: () => context.push('/reports'),
-                      child: Text('See All', style: TextStyle(fontWeight: FontWeight.bold, color: colorScheme.primary)),
+                      child: Text(AppLocalizations.of(context)!.seeAllBtn, style: TextStyle(fontWeight: FontWeight.bold, color: colorScheme.primary)),
                     ),
                   ],
                 ),
@@ -123,8 +124,8 @@ class DashboardScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Mintly', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: colorScheme.onPrimary, letterSpacing: -0.5)),
-                      Text('Personal Finance', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: colorScheme.onPrimary.withValues(alpha: 0.8))),
+                      Text(AppLocalizations.of(context)!.mintlyTitle, style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: colorScheme.onPrimary, letterSpacing: -0.5)),
+                      Text(AppLocalizations.of(context)!.personalFinance, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: colorScheme.onPrimary.withValues(alpha: 0.8))),
                     ],
                   ),
                 ),
@@ -136,17 +137,17 @@ class DashboardScreen extends ConsumerWidget {
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               children: [
-                _buildDrawerItem(context, Icons.account_balance, 'Accounts', '/accounts'),
-                _buildDrawerItem(context, Icons.category, 'Categories', '/categories'),
-                _buildDrawerItem(context, Icons.flag, 'Goals', '/goals'),
-                _buildDrawerItem(context, Icons.pie_chart, 'Budgets', '/budgets'),
-                _buildDrawerItem(context, Icons.calendar_month, 'Calendar', '/calendar'),
-                _buildDrawerItem(context, Icons.bar_chart, 'Reports', '/reports'),
+                _buildDrawerItem(context, Icons.account_balance, AppLocalizations.of(context)!.accounts, '/accounts'),
+                _buildDrawerItem(context, Icons.category, AppLocalizations.of(context)!.categoriesTitle, '/categories'),
+                _buildDrawerItem(context, Icons.flag, AppLocalizations.of(context)!.goalsTitle, '/goals'),
+                _buildDrawerItem(context, Icons.pie_chart, AppLocalizations.of(context)!.budgets, '/budgets'),
+                _buildDrawerItem(context, Icons.calendar_month, AppLocalizations.of(context)!.calendarTitle, '/calendar'),
+                _buildDrawerItem(context, Icons.bar_chart, AppLocalizations.of(context)!.reports, '/reports'),
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                   child: Divider(),
                 ),
-                _buildDrawerItem(context, Icons.settings, 'Settings', '/settings'),
+                _buildDrawerItem(context, Icons.settings, AppLocalizations.of(context)!.settings, '/settings'),
               ],
             ),
           ),
@@ -187,7 +188,7 @@ class DashboardScreen extends ConsumerWidget {
         Expanded(
           child: _buildActionButton(
             context, 
-            'Income', 
+            AppLocalizations.of(context)!.income, 
             Icons.arrow_downward, 
             colorScheme.secondary, 
             () => context.push('/add-transaction', extra: TransactionType.income)
@@ -197,7 +198,7 @@ class DashboardScreen extends ConsumerWidget {
         Expanded(
           child: _buildActionButton(
             context, 
-            'Expense', 
+            AppLocalizations.of(context)!.expense, 
             Icons.arrow_upward, 
             colorScheme.error, 
             () => context.push('/add-transaction', extra: TransactionType.expense)

@@ -8,6 +8,8 @@ import 'package:moneytrackerapp/presentation/dashboard/providers/dashboard_provi
 import 'package:moneytrackerapp/presentation/categories/providers/category_provider.dart';
 import 'package:moneytrackerapp/presentation/accounts/providers/account_provider.dart';
 
+import 'package:moneytrackerapp/l10n/app_localizations.dart';
+import 'package:moneytrackerapp/core/utils/localization_helper.dart';
 class AddEditTransactionScreen extends ConsumerStatefulWidget {
   final TransactionEntity? transaction;
   final TransactionType? initialType;
@@ -100,11 +102,11 @@ class _AddEditTransactionScreenState extends ConsumerState<AddEditTransactionScr
 
     final transaction = TransactionEntity(
       id: widget.transaction?.id ?? const Uuid().v4(),
-      title: _noteController.text.isNotEmpty ? _noteController.text : (_selectedCategory ?? 'Unknown'),
+      title: _noteController.text.isNotEmpty ? _noteController.text : (_selectedCategory ?? AppLocalizations.of(context)!.unknown),
       amount: amount,
       date: date,
       type: _type,
-      category: _selectedCategory ?? 'Unknown',
+      category: _selectedCategory ?? AppLocalizations.of(context)!.unknown,
       note: _noteController.text,
       paymentMethod: _paymentMethodController.text,
       accountId: _selectedAccountId ?? (ref.read(accountsProvider).value?.isNotEmpty == true ? ref.read(accountsProvider).value!.first.id : 'acc_cash'),
@@ -140,12 +142,12 @@ class _AddEditTransactionScreenState extends ConsumerState<AddEditTransactionScr
                 showDialog(
                   context: context,
                   builder: (ctx) => AlertDialog(
-                    title: const Text('Delete Transaction'),
-                    content: const Text('Are you sure you want to delete this transaction?'),
+                    title: Text(AppLocalizations.of(context)!.deleteTransaction),
+                    content: Text(AppLocalizations.of(context)!.areYouSureDeleteTransaction),
                     actions: [
                       TextButton(
                         onPressed: () => ctx.pop(),
-                        child: const Text('Cancel'),
+                        child: Text(AppLocalizations.of(context)!.cancel),
                       ),
                       TextButton(
                         onPressed: () {
@@ -153,7 +155,7 @@ class _AddEditTransactionScreenState extends ConsumerState<AddEditTransactionScr
                           ctx.pop(); // close dialog
                           context.pop(); // close screen
                         },
-                        child: Text('Delete', style: TextStyle(color: colorScheme.error)),
+                        child: Text(AppLocalizations.of(context)!.deleteBtn, style: TextStyle(color: colorScheme.error)),
                       ),
                     ],
                   ),
@@ -173,9 +175,9 @@ class _AddEditTransactionScreenState extends ConsumerState<AddEditTransactionScr
               child: Column(
                 children: [
                   SegmentedButton<TransactionType>(
-                    segments: const [
-                      ButtonSegment(value: TransactionType.expense, label: Text('Expense')),
-                      ButtonSegment(value: TransactionType.income, label: Text('Income')),
+                    segments: [
+                      ButtonSegment(value: TransactionType.expense, label: Text(AppLocalizations.of(context)!.expense)),
+                      ButtonSegment(value: TransactionType.income, label: Text(AppLocalizations.of(context)!.income)),
                     ],
                     selected: {_type},
                     onSelectionChanged: (selection) {
@@ -189,7 +191,7 @@ class _AddEditTransactionScreenState extends ConsumerState<AddEditTransactionScr
                       selectedBackgroundColor: _type == TransactionType.income ? colorScheme.secondary : colorScheme.error,
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  SizedBox(height: 32),
                   Form(
                     key: _formKey,
                     child: TextFormField(
@@ -198,7 +200,7 @@ class _AddEditTransactionScreenState extends ConsumerState<AddEditTransactionScr
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 48, fontWeight: FontWeight.w800, color: _type == TransactionType.income ? colorScheme.secondary : colorScheme.error),
                       decoration: InputDecoration(
-                        hintText: '0.00',
+                        hintText: AppLocalizations.of(context)!.zeroAmount,
                         prefixText: '\$ ',
                         prefixStyle: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: colorScheme.onSurface.withValues(alpha: 0.5)),
                         border: InputBorder.none,
@@ -211,9 +213,9 @@ class _AddEditTransactionScreenState extends ConsumerState<AddEditTransactionScr
                       ),
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
                       validator: (value) {
-                        if (value == null || value.isEmpty) return 'Please enter amount';
+                        if (value == null || value.isEmpty) return AppLocalizations.of(context)!.enterAmountPlease;
                         final val = double.tryParse(value);
-                        if (val == null || val <= 0) return 'Invalid amount';
+                        if (val == null || val <= 0) return AppLocalizations.of(context)!.invalidAmount;
                         return null;
                       },
                     ),
@@ -227,8 +229,8 @@ class _AddEditTransactionScreenState extends ConsumerState<AddEditTransactionScr
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Category', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: colorScheme.onSurfaceVariant)),
-                    const SizedBox(height: 12),
+                    Text(AppLocalizations.of(context)!.category, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: colorScheme.onSurfaceVariant)),
+                    SizedBox(height: 12),
                     categoriesState.when(
                       data: (categories) {
                         final filteredCategories = categories.where((c) => c.type == _type).toList();
@@ -238,7 +240,7 @@ class _AddEditTransactionScreenState extends ConsumerState<AddEditTransactionScr
                           children: filteredCategories.map((cat) {
                             final isSelected = _selectedCategory == cat.id || _selectedCategory == cat.name;
                             return ChoiceChip(
-                              label: Text(cat.name),
+                              label: Text(cat.name.getLocalized(context)),
                               selected: isSelected,
                               avatar: Icon(IconData(cat.iconCodePoint, fontFamily: 'MaterialIcons'), color: isSelected ? Colors.white : Color(cat.colorValue), size: 18),
                               onSelected: (selected) {
@@ -257,9 +259,9 @@ class _AddEditTransactionScreenState extends ConsumerState<AddEditTransactionScr
                       loading: () => const CircularProgressIndicator(),
                       error: (e, st) => Text('Error loading categories: $e'),
                     ),
-                    const SizedBox(height: 24),
-                    Text('Account', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: colorScheme.onSurfaceVariant)),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 24),
+                    Text(AppLocalizations.of(context)!.account, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: colorScheme.onSurfaceVariant)),
+                    SizedBox(height: 12),
                     accountsState.when(
                       data: (accounts) {
                         return DropdownButtonFormField<String>(
@@ -276,7 +278,7 @@ class _AddEditTransactionScreenState extends ConsumerState<AddEditTransactionScr
                               child: Row(
                                 children: [
                                   Icon(IconData(acc.iconCodePoint, fontFamily: 'MaterialIcons'), color: Color(acc.colorValue)),
-                                  const SizedBox(width: 12),
+                                  SizedBox(width: 12),
                                   Text(acc.name, style: const TextStyle(fontWeight: FontWeight.w600)),
                                 ],
                               ),
@@ -287,13 +289,13 @@ class _AddEditTransactionScreenState extends ConsumerState<AddEditTransactionScr
                               _selectedAccountId = val;
                             });
                           },
-                          validator: (value) => value == null ? 'Please select an account' : null,
+                          validator: (value) => value == null ? AppLocalizations.of(context)!.selectAccountPlease : null,
                         );
                       },
                       loading: () => const CircularProgressIndicator(),
                       error: (e, st) => Text('Error loading accounts: $e'),
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24),
                     Row(
                       children: [
                         Expanded(
@@ -310,14 +312,14 @@ class _AddEditTransactionScreenState extends ConsumerState<AddEditTransactionScr
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(Icons.calendar_today, size: 20, color: colorScheme.primary),
-                                  const SizedBox(width: 8),
+                                  SizedBox(width: 8),
                                   Text(DateFormat.yMMMd().format(_selectedDate), style: const TextStyle(fontWeight: FontWeight.w600)),
                                 ],
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: 12),
                         Expanded(
                           child: InkWell(
                             onTap: _pickTime,
@@ -332,7 +334,7 @@ class _AddEditTransactionScreenState extends ConsumerState<AddEditTransactionScr
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(Icons.access_time, size: 20, color: colorScheme.primary),
-                                  const SizedBox(width: 8),
+                                  SizedBox(width: 8),
                                   Text(_selectedTime.format(context), style: const TextStyle(fontWeight: FontWeight.w600)),
                                 ],
                               ),
@@ -341,23 +343,23 @@ class _AddEditTransactionScreenState extends ConsumerState<AddEditTransactionScr
                         ),
                       ],
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24),
                     TextFormField(
                       controller: _noteController,
                       decoration: InputDecoration(
-                        labelText: 'Note (Optional)',
+                        labelText: AppLocalizations.of(context)!.noteOptional,
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
                         filled: true,
                         fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                       ),
                     ),
-                    const SizedBox(height: 32),
+                    SizedBox(height: 32),
                     SizedBox(
                       width: double.infinity,
                       child: FilledButton(
                         onPressed: () {
                           if (_selectedCategory == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select a category')));
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.pleaseSelectACategory)));
                             return;
                           }
                           _saveTransaction();
@@ -369,7 +371,7 @@ class _AddEditTransactionScreenState extends ConsumerState<AddEditTransactionScr
                         child: Text(isEditing ? 'Update Transaction' : 'Save Transaction', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                       ),
                     ),
-                    const SizedBox(height: 40),
+                    SizedBox(height: 40),
                   ],
                 ),
               ),

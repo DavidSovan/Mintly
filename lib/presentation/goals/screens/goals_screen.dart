@@ -12,6 +12,9 @@ import 'package:moneytrackerapp/domain/entities/category.dart';
 import 'package:moneytrackerapp/presentation/accounts/providers/account_provider.dart';
 import 'package:moneytrackerapp/presentation/categories/providers/category_provider.dart';
 
+import 'package:moneytrackerapp/l10n/app_localizations.dart';
+import 'package:moneytrackerapp/presentation/settings/providers/settings_provider.dart';
+import 'package:moneytrackerapp/core/utils/localization_helper.dart';
 class GoalsScreen extends ConsumerStatefulWidget {
   const GoalsScreen({super.key});
 
@@ -35,7 +38,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
           builder: (context, setState) {
             return AlertDialog(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              title: const Text('Add Funds', style: TextStyle(fontWeight: FontWeight.bold)),
+              title: Text(AppLocalizations.of(context)!.addFunds, style: TextStyle(fontWeight: FontWeight.bold)),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -43,7 +46,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
                     controller: amountController,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     decoration: InputDecoration(
-                      labelText: 'Amount',
+                      labelText: AppLocalizations.of(context)!.amount,
                       prefixText: '\$ ',
                       filled: true,
                       fillColor: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
@@ -56,7 +59,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
                   if (accounts.isNotEmpty)
                     DropdownButtonFormField<String>(
                       decoration: InputDecoration(
-                        labelText: 'From Account',
+                        labelText: AppLocalizations.of(context)!.fromAccount,
                         filled: true,
                         fillColor: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
@@ -66,7 +69,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
                       items: accounts.map((acc) {
                         return DropdownMenuItem(
                           value: acc.id,
-                          child: Text(acc.name),
+                          child: Text(acc.name.getLocalized(context)),
                         );
                       }).toList(),
                       onChanged: (val) {
@@ -80,7 +83,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Cancel'),
+                  child: Text(AppLocalizations.of(context)!.cancel),
                 ),
                 FilledButton(
                   onPressed: () {
@@ -92,7 +95,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
                   style: FilledButton.styleFrom(
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
-                  child: const Text('Add', style: TextStyle(fontWeight: FontWeight.bold)),
+                  child: Text(AppLocalizations.of(context)!.add, style: TextStyle(fontWeight: FontWeight.bold)),
                 ),
               ],
             );
@@ -125,7 +128,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
         // Create it dynamically if it doesn't exist
         savingsCategory = CategoryEntity(
           id: 'cat_savings_dynamic',
-          name: 'Savings',
+          name: AppLocalizations.of(context)!.savings,
           type: TransactionType.expense,
           iconCodePoint: Icons.savings.codePoint,
           colorValue: 0xFFFF9800,
@@ -162,7 +165,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Savings Goals', style: TextStyle(fontWeight: FontWeight.w600)),
+        title: Text(AppLocalizations.of(context)!.savingsGoalsTitle, style: TextStyle(fontWeight: FontWeight.w600)),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -184,12 +187,12 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    'No savings goals yet.',
+                    AppLocalizations.of(context)!.noSavingsGoals,
                     style: TextStyle(fontSize: 20, color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w700, letterSpacing: -0.5),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Add a goal to start tracking!',
+                    AppLocalizations.of(context)!.addGoalToStart,
                     style: TextStyle(fontSize: 15, color: Theme.of(context).colorScheme.onSurfaceVariant, fontWeight: FontWeight.w500),
                   ),
                 ],
@@ -197,7 +200,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
             );
           }
 
-          final formatCurrency = NumberFormat.simpleCurrency();
+          final formatCurrency = NumberFormat.simpleCurrency(name: ref.watch(settingsProvider).value?.currency);
           final formatDate = DateFormat.yMMMd();
 
           return ListView.builder(
@@ -313,7 +316,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
                           FilledButton.icon(
                             onPressed: () => _showAddFundsDialog(goal, ref),
                             icon: const Icon(Icons.add_circle_outline, size: 18),
-                            label: const Text('Add Funds', style: TextStyle(fontWeight: FontWeight.bold)),
+                            label: Text(AppLocalizations.of(context)!.addFunds, style: TextStyle(fontWeight: FontWeight.bold)),
                             style: FilledButton.styleFrom(
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -338,7 +341,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
         elevation: 2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         icon: const Icon(Icons.add),
-        label: const Text('Add Goal', style: TextStyle(fontWeight: FontWeight.w600)),
+        label: Text(AppLocalizations.of(context)!.addGoalAction, style: TextStyle(fontWeight: FontWeight.w600)),
       ),
     );
   }

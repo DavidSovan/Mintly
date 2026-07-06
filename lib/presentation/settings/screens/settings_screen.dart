@@ -13,6 +13,7 @@ import 'package:moneytrackerapp/presentation/accounts/providers/account_provider
 import 'package:moneytrackerapp/presentation/budgets/providers/budgets_provider.dart';
 import 'package:moneytrackerapp/presentation/settings/providers/settings_provider.dart';
 
+import 'package:moneytrackerapp/l10n/app_localizations.dart';
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
@@ -31,7 +32,7 @@ class SettingsScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Settings', style: TextStyle(fontWeight: FontWeight.w600)),
+        title: Text(AppLocalizations.of(context)!.settingsTitle, style: TextStyle(fontWeight: FontWeight.w600)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -58,13 +59,13 @@ class SettingsScreen extends ConsumerWidget {
                       context: context,
                       icon: Icons.attach_money,
                       iconColor: colorScheme.primary,
-                      title: 'Currency',
+                      title: AppLocalizations.of(context)!.currency,
                       subtitle: settings.currency,
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () async {
                         final newCurrency = await _showOptionsDialog(
                           context, 
-                          'Select Currency', 
+                          AppLocalizations.of(context)!.selectCurrency, 
                           ['USD', 'EUR', 'GBP', 'JPY', 'INR', 'AUD', 'CAD']
                         );
                         if (newCurrency != null) {
@@ -77,7 +78,7 @@ class SettingsScreen extends ConsumerWidget {
                       context: context,
                       icon: Icons.brightness_6,
                       iconColor: colorScheme.secondary,
-                      title: 'Theme',
+                      title: AppLocalizations.of(context)!.theme,
                       subtitle: AppThemeManager.getTheme(settings.themeId).name,
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () => context.push('/theme-settings'),
@@ -87,14 +88,14 @@ class SettingsScreen extends ConsumerWidget {
                       context: context,
                       icon: Icons.language,
                       iconColor: colorScheme.primary,
-                      title: 'Language',
-                      subtitle: settings.language == 'en' ? 'English' : settings.language,
+                      title: AppLocalizations.of(context)!.language,
+                      subtitle: {'en': AppLocalizations.of(context)!.english, 'es': AppLocalizations.of(context)!.spanish, 'fr': AppLocalizations.of(context)!.french, 'km': AppLocalizations.of(context)!.khmer}[settings.language] ?? settings.language,
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () async {
-                        final langMap = {'en': 'English', 'es': 'Spanish', 'fr': 'French'};
+                        final langMap = {'en': AppLocalizations.of(context)!.english, 'es': AppLocalizations.of(context)!.spanish, 'fr': AppLocalizations.of(context)!.french, 'km': AppLocalizations.of(context)!.khmer};
                         final newLangName = await _showOptionsDialog(
                           context, 
-                          'Select Language', 
+                          AppLocalizations.of(context)!.selectLanguage, 
                           langMap.values.toList()
                         );
                         if (newLangName != null) {
@@ -108,8 +109,8 @@ class SettingsScreen extends ConsumerWidget {
                       context: context,
                       icon: Icons.numbers,
                       iconColor: colorScheme.secondary,
-                      title: 'Decimal Format',
-                      subtitle: settings.decimalFormat == 2 ? '2 Decimals (e.g. 10.00)' : '0 Decimals (e.g. 10)',
+                      title: AppLocalizations.of(context)!.decimalFormat,
+                      subtitle: settings.decimalFormat == 2 ? AppLocalizations.of(context)!.twoDecimals : AppLocalizations.of(context)!.zeroDecimals,
                       trailing: Switch(
                         value: settings.decimalFormat == 2,
                         activeColor: colorScheme.primary,
@@ -123,8 +124,8 @@ class SettingsScreen extends ConsumerWidget {
                       context: context,
                       icon: Icons.calendar_today,
                       iconColor: colorScheme.primary,
-                      title: 'First day of week',
-                      subtitle: settings.firstDayOfWeek == 1 ? 'Monday' : 'Sunday',
+                      title: AppLocalizations.of(context)!.firstDayOfWeek,
+                      subtitle: settings.firstDayOfWeek == 1 ? AppLocalizations.of(context)!.monday : AppLocalizations.of(context)!.sunday,
                       trailing: Switch(
                         value: settings.firstDayOfWeek == 1,
                         activeColor: colorScheme.primary,
@@ -138,7 +139,7 @@ class SettingsScreen extends ConsumerWidget {
                       context: context,
                       icon: Icons.notifications,
                       iconColor: colorScheme.secondary,
-                      title: 'Notifications',
+                      title: AppLocalizations.of(context)!.notifications,
                       trailing: Switch(
                         value: settings.notificationsEnabled,
                         activeColor: colorScheme.primary,
@@ -168,8 +169,8 @@ class SettingsScreen extends ConsumerWidget {
                       context: context,
                       icon: Icons.upload_file,
                       iconColor: colorScheme.primary,
-                      title: 'Export Database',
-                      subtitle: 'Backup your data safely.',
+                      title: AppLocalizations.of(context)!.exportDatabase,
+                      subtitle: AppLocalizations.of(context)!.backupYourDataSafely,
                       onTap: () async {
                         final service = ref.read(dataManagementServiceProvider);
                         final dbPath = await service.getDatabasePath();
@@ -186,9 +187,9 @@ class SettingsScreen extends ConsumerWidget {
                           try {
                             final destPath = p.join(selectedDirectory, 'mintly_backup_${DateTime.now().millisecondsSinceEpoch}.db');
                             await dbFile.copy(destPath);
-                            if (context.mounted) _showSnackBar(context, 'Database exported to: $destPath');
+                            if (context.mounted) _showSnackBar(context, AppLocalizations.of(context)!.exportSuccess(destPath));
                           } catch (e) {
-                            if (context.mounted) _showSnackBar(context, 'Export failed: $e');
+                            if (context.mounted) _showSnackBar(context, AppLocalizations.of(context)!.exportFailed(e.toString()));
                           }
                         }
                       },
@@ -198,8 +199,8 @@ class SettingsScreen extends ConsumerWidget {
                       context: context,
                       icon: Icons.download,
                       iconColor: colorScheme.secondary,
-                      title: 'Restore Database',
-                      subtitle: 'Replace data from a backup.',
+                      title: AppLocalizations.of(context)!.restoreDatabase,
+                      subtitle: AppLocalizations.of(context)!.replaceDataFromBackup,
                       onTap: () async {
                         FilePickerResult? result = await FilePicker.pickFiles(
                           type: FileType.custom,
@@ -209,8 +210,8 @@ class SettingsScreen extends ConsumerWidget {
                         if (result != null && result.files.single.path != null) {
                           final confirm = await _showConfirmDialog(
                             context, 
-                            'Restore Database?', 
-                            'This will overwrite your current data with the selected backup. This action cannot be undone.'
+                            AppLocalizations.of(context)!.restoreDbPrompt, 
+                            AppLocalizations.of(context)!.overwriteBackupWarning
                           );
 
                           if (confirm == true) {
@@ -225,9 +226,9 @@ class SettingsScreen extends ConsumerWidget {
                               
                               _refreshAll(ref);
                               
-                              if (context.mounted) _showSnackBar(context, 'Database restored successfully.');
+                              if (context.mounted) _showSnackBar(context, AppLocalizations.of(context)!.dbRestoredSuccess);
                             } catch (e) {
-                              if (context.mounted) _showSnackBar(context, 'Restore failed: $e');
+                              if (context.mounted) _showSnackBar(context, AppLocalizations.of(context)!.restoreFailed(e.toString()));
                             }
                           }
                         }
@@ -238,19 +239,19 @@ class SettingsScreen extends ConsumerWidget {
                       context: context,
                       icon: Icons.delete_sweep,
                       iconColor: colorScheme.error,
-                      title: 'Delete all data',
-                      subtitle: 'Removes transactions and budgets.',
+                      title: AppLocalizations.of(context)!.deleteAllData,
+                      subtitle: AppLocalizations.of(context)!.removesTransactionsAndBudgets,
                       onTap: () async {
                         final confirm = await _showConfirmDialog(
                           context, 
-                          'Delete All Data?', 
-                          'This will permanently delete all transactions and budgets. Categories and accounts will remain intact.'
+                          AppLocalizations.of(context)!.deleteAllDataPrompt, 
+                          AppLocalizations.of(context)!.deleteTransactionsBudgetsWarning
                         );
                         if (confirm == true) {
                           final service = ref.read(dataManagementServiceProvider);
                           await service.deleteAllData();
                           _refreshAll(ref);
-                          if (context.mounted) _showSnackBar(context, 'All data deleted successfully.');
+                          if (context.mounted) _showSnackBar(context, AppLocalizations.of(context)!.allDataDeleted);
                         }
                       },
                     ),
@@ -259,20 +260,20 @@ class SettingsScreen extends ConsumerWidget {
                       context: context,
                       icon: Icons.warning,
                       iconColor: colorScheme.error,
-                      title: 'Reset App',
-                      subtitle: 'Deletes all data and restores defaults.',
+                      title: AppLocalizations.of(context)!.resetApp,
+                      subtitle: AppLocalizations.of(context)!.deletesAllData,
                       titleColor: colorScheme.error,
                       onTap: () async {
                         final confirm = await _showConfirmDialog(
                           context, 
-                          'Reset Application?', 
-                          'This will completely wipe all data and restore the application to its original state. This cannot be undone.'
+                          AppLocalizations.of(context)!.resetAppPrompt, 
+                          AppLocalizations.of(context)!.wipeDataWarning
                         );
                         if (confirm == true) {
                           final service = ref.read(dataManagementServiceProvider);
                           await service.resetApp();
                           _refreshAll(ref);
-                          if (context.mounted) _showSnackBar(context, 'Application reset successfully.');
+                          if (context.mounted) _showSnackBar(context, AppLocalizations.of(context)!.appResetSuccess);
                         }
                       },
                     ),
@@ -377,7 +378,7 @@ class SettingsScreen extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             FilledButton(
               onPressed: () => Navigator.of(context).pop(true),
@@ -385,7 +386,7 @@ class SettingsScreen extends ConsumerWidget {
                 backgroundColor: Colors.red,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text('Confirm'),
+              child: Text(AppLocalizations.of(context)!.confirm),
             ),
           ],
         );
