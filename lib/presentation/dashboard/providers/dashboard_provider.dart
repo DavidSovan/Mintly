@@ -3,6 +3,7 @@ import 'package:moneytrackerapp/core/providers/global_providers.dart';
 import 'package:moneytrackerapp/domain/entities/transaction.dart';
 import 'package:moneytrackerapp/domain/entities/settings.dart';
 import 'package:moneytrackerapp/presentation/settings/providers/settings_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 class TransactionNotifier extends AsyncNotifier<List<TransactionEntity>> {
   @override
   Future<List<TransactionEntity>> build() async {
@@ -138,11 +139,11 @@ final weekSpendingProvider = Provider<double>((ref) {
     data: (transactions) {
       final now = DateTime.now();
       int daysToSubtract = settings.firstDayOfWeek == 1 ? now.weekday - 1 : now.weekday % 7;
-      final startOfWeek = DateTime(now.year, now.month, now.day).subtract(Duration(days: daysToSubtract));
-      final endOfWeek = startOfWeek.add(const Duration(days: 6));
+      final startOfWeek = DateTime(now.year, now.month, now.day - daysToSubtract);
+      final endOfWeek = DateTime(startOfWeek.year, startOfWeek.month, startOfWeek.day + 6);
       
       return transactions
-          .where((t) => t.type == TransactionType.expense && t.date.isAfter(startOfWeek.subtract(const Duration(days: 1))) && t.date.isBefore(endOfWeek.add(const Duration(days: 1))))
+          .where((t) => t.type == TransactionType.expense && (t.date.compareTo(startOfWeek) >= 0) && t.date.isBefore(DateTime(endOfWeek.year, endOfWeek.month, endOfWeek.day + 1)))
           .fold(0.0, (sum, t) => sum + t.amount);
     },
     orElse: () => 0.0,
@@ -165,10 +166,24 @@ final monthSpendingProvider = Provider<double>((ref) {
 
 // Hide Balance Toggle
 class HideBalanceNotifier extends Notifier<bool> {
+  static const _prefsKey = 'hide_balance';
+
   @override
-  bool build() => false;
+  bool build() {
+    _loadState();
+    return false;
+  }
   
-  void toggle() => state = !state;
+  Future<void> _loadState() async {
+    final prefs = await SharedPreferences.getInstance();
+    state = prefs.getBool(_prefsKey) ?? false;
+  }
+  
+  Future<void> toggle() async {
+    state = !state;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_prefsKey, state);
+  }
 }
 
 final hideBalanceProvider = NotifierProvider<HideBalanceNotifier, bool>(() {
@@ -190,9 +205,9 @@ final thisWeekChartProvider = Provider<List<DailySpending>>((ref) {
     data: (transactions) {
       final now = DateTime.now();
       int daysToSubtract = settings.firstDayOfWeek == 1 ? now.weekday - 1 : now.weekday % 7;
-      final startOfWeek = DateTime(now.year, now.month, now.day).subtract(Duration(days: daysToSubtract));
+      final startOfWeek = DateTime(now.year, now.month, now.day - daysToSubtract);
       
-      final currentWeekDays = List.generate(7, (i) => startOfWeek.add(Duration(days: i)));
+      final currentWeekDays = List.generate(7, (i) => DateTime(startOfWeek.year, startOfWeek.month, startOfWeek.day + i));
       
       return currentWeekDays.map((date) {
         final amount = transactions

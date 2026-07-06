@@ -103,10 +103,10 @@ final budgetProgressListProvider = Provider<AsyncValue<List<BudgetProgress>>>((r
       } else if (budget.period == 'weekly') {
         final settings = ref.read(settingsProvider).value ?? const SettingsEntity();
         int daysToSubtract = settings.firstDayOfWeek == 1 ? now.weekday - 1 : now.weekday % 7;
-        final startOfWeek = DateTime(now.year, now.month, now.day).subtract(Duration(days: daysToSubtract));
-        final endOfWeek = startOfWeek.add(const Duration(days: 6));
-        return t.date.isAfter(startOfWeek.subtract(const Duration(days: 1))) && 
-               t.date.isBefore(endOfWeek.add(const Duration(days: 1)));
+        final startOfWeek = DateTime(now.year, now.month, now.day - daysToSubtract);
+        final endOfWeek = DateTime(startOfWeek.year, startOfWeek.month, startOfWeek.day + 6);
+        return (t.date.compareTo(startOfWeek) >= 0) && 
+               t.date.isBefore(DateTime(endOfWeek.year, endOfWeek.month, endOfWeek.day + 1));
       }
       return false;
     });

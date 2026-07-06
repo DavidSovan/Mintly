@@ -57,12 +57,12 @@ final categoryExpenseProvider = Provider<AsyncValue<List<CategoryExpense>>>((ref
         inPeriod = t.date.year == now.year && t.date.month == now.month && t.date.day == now.day;
         break;
       case ReportPeriod.weekly:
-        final settings = ref.read(settingsProvider).value ?? const SettingsEntity();
+        final settings = ref.watch(settingsProvider).value ?? const SettingsEntity();
         int daysToSubtract = settings.firstDayOfWeek == 1 ? now.weekday - 1 : now.weekday % 7;
-        final startOfWeek = DateTime(now.year, now.month, now.day).subtract(Duration(days: daysToSubtract));
-        final endOfWeek = startOfWeek.add(const Duration(days: 6));
-        inPeriod = t.date.isAfter(startOfWeek.subtract(const Duration(days: 1))) && 
-                   t.date.isBefore(endOfWeek.add(const Duration(days: 1)));
+        final startOfWeek = DateTime(now.year, now.month, now.day - daysToSubtract);
+        final endOfWeek = DateTime(startOfWeek.year, startOfWeek.month, startOfWeek.day + 6);
+        inPeriod = (t.date.compareTo(startOfWeek) >= 0) && 
+                   t.date.isBefore(DateTime(endOfWeek.year, endOfWeek.month, endOfWeek.day + 1));
         break;
       case ReportPeriod.monthly:
         inPeriod = t.date.year == now.year && t.date.month == now.month;
@@ -119,12 +119,12 @@ final incomeVsExpenseProvider = Provider<AsyncValue<Map<String, double>>>((ref) 
         inPeriod = t.date.year == now.year && t.date.month == now.month && t.date.day == now.day;
         break;
       case ReportPeriod.weekly:
-        final settings = ref.read(settingsProvider).value ?? const SettingsEntity();
+        final settings = ref.watch(settingsProvider).value ?? const SettingsEntity();
         int daysToSubtract = settings.firstDayOfWeek == 1 ? now.weekday - 1 : now.weekday % 7;
-        final startOfWeek = DateTime(now.year, now.month, now.day).subtract(Duration(days: daysToSubtract));
-        final endOfWeek = startOfWeek.add(const Duration(days: 6));
-        inPeriod = t.date.isAfter(startOfWeek.subtract(const Duration(days: 1))) && 
-                   t.date.isBefore(endOfWeek.add(const Duration(days: 1)));
+        final startOfWeek = DateTime(now.year, now.month, now.day - daysToSubtract);
+        final endOfWeek = DateTime(startOfWeek.year, startOfWeek.month, startOfWeek.day + 6);
+        inPeriod = (t.date.compareTo(startOfWeek) >= 0) && 
+                   t.date.isBefore(DateTime(endOfWeek.year, endOfWeek.month, endOfWeek.day + 1));
         break;
       case ReportPeriod.monthly:
         inPeriod = t.date.year == now.year && t.date.month == now.month;
@@ -171,12 +171,12 @@ final timeSeriesSpendingProvider = Provider<AsyncValue<List<TimeSeriesData>>>((r
         break;
       case ReportPeriod.weekly:
         // Show days of this week
-        final settings = ref.read(settingsProvider).value ?? const SettingsEntity();
+        final settings = ref.watch(settingsProvider).value ?? const SettingsEntity();
         int daysToSubtract = settings.firstDayOfWeek == 1 ? now.weekday - 1 : now.weekday % 7;
-        final startOfWeek = DateTime(now.year, now.month, now.day).subtract(Duration(days: daysToSubtract));
-        final endOfWeek = startOfWeek.add(const Duration(days: 6));
-        inPeriod = t.date.isAfter(startOfWeek.subtract(const Duration(days: 1))) && 
-                   t.date.isBefore(endOfWeek.add(const Duration(days: 1)));
+        final startOfWeek = DateTime(now.year, now.month, now.day - daysToSubtract);
+        final endOfWeek = DateTime(startOfWeek.year, startOfWeek.month, startOfWeek.day + 6);
+        inPeriod = (t.date.compareTo(startOfWeek) >= 0) && 
+                   t.date.isBefore(DateTime(endOfWeek.year, endOfWeek.month, endOfWeek.day + 1));
         keyDate = DateTime(t.date.year, t.date.month, t.date.day);
         break;
       case ReportPeriod.monthly:

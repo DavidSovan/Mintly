@@ -123,8 +123,8 @@ class TransactionItem extends ConsumerWidget {
           subtitle: Padding(
             padding: const EdgeInsets.only(top: 4.0),
             child: Text(
-              category != null 
-                  ? '${transaction.title}  •  ${DateFormat.yMMMd().format(transaction.date)}'
+              transaction.note.isNotEmpty 
+                  ? '${transaction.note}  •  ${DateFormat.yMMMd().format(transaction.date)}'
                   : DateFormat.yMMMd().format(transaction.date),
               style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 13, fontWeight: FontWeight.w500),
             ),

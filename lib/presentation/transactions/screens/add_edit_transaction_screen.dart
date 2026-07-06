@@ -107,7 +107,7 @@ class _AddEditTransactionScreenState extends ConsumerState<AddEditTransactionScr
       category: _selectedCategory ?? 'Unknown',
       note: _noteController.text,
       paymentMethod: _paymentMethodController.text,
-      accountId: _selectedAccountId ?? 'acc_cash', // Fallback to cash
+      accountId: _selectedAccountId ?? (ref.read(accountsProvider).value?.isNotEmpty == true ? ref.read(accountsProvider).value!.first.id : 'acc_cash'),
       attachmentPath: _attachmentPath,
     );
 
@@ -263,7 +263,7 @@ class _AddEditTransactionScreenState extends ConsumerState<AddEditTransactionScr
                     accountsState.when(
                       data: (accounts) {
                         return DropdownButtonFormField<String>(
-                          initialValue: accounts.any((a) => a.id == _selectedAccountId) ? _selectedAccountId : null,
+                          initialValue: accounts.any((a) => a.id == _selectedAccountId) ? _selectedAccountId : (accounts.isNotEmpty ? accounts.first.id : null),
                           decoration: InputDecoration(
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
                             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
