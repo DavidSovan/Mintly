@@ -557,12 +557,13 @@ class _CategoryPieChart extends ConsumerWidget {
 
           return Column(
             children: [
-              SizedBox(
-                height: 220,
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 5,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    flex: 5,
+                    child: SizedBox(
+                      height: 220,
                       child: PieChart(
                         PieChartData(
                           sectionsSpace: 3,
@@ -585,50 +586,50 @@ class _CategoryPieChart extends ConsumerWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 32),
-                    Expanded(
-                      flex: 4,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: data.map((item) {
-                          final percentage = (item.amount / total * 100).toStringAsFixed(0);
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 10.0),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 10,
-                                  height: 10,
-                                  decoration: BoxDecoration(
-                                    color: Color(item.colorValue),
-                                    borderRadius: BorderRadius.circular(3),
-                                  ),
+                  ),
+                  const SizedBox(width: 32),
+                  Expanded(
+                    flex: 4,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: data.map((item) {
+                        final percentage = (item.amount / total * 100).toStringAsFixed(0);
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 10.0),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 10,
+                                height: 10,
+                                decoration: BoxDecoration(
+                                  color: Color(item.colorValue),
+                                  borderRadius: BorderRadius.circular(3),
                                 ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        item.categoryName,
-                                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      Text(
-                                        '${formatCurrency.format(item.amount)} · $percentage%',
-                                        style: TextStyle(fontSize: 10, color: colorScheme.onSurfaceVariant),
-                                      ),
-                                    ],
-                                  ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      item.categoryName,
+                                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    Text(
+                                      '${formatCurrency.format(item.amount)} · $percentage%',
+                                      style: TextStyle(fontSize: 10, color: colorScheme.onSurfaceVariant),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                      ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
               // Total row
